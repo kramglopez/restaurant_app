@@ -47,45 +47,45 @@
 				$this->save_image_to_folder($img);
 			}
 			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
-			$send['menu_price'] = $data[2]['value'];
-			$send['menu_status'] = $data[6]['value'];
-			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
+			$send['food_code'] = $menu_code;
+			$send['food_title'] = strtolower($data[0]['value']);
+			$send['food_desc'] = $data[1]['value'];
+			$send['food_newprice'] = $data[2]['value'];
+			$send['food_status'] = $data[6]['value'];
+			$send['menu_id'] = strtolower($data[5]['value']);
+		//	$send['uom'] = $data[4]['value'];    
+			$send['food_quantity'] = $data[3]['value'];
 
-			$cond['menu_id'] = $menu_id;
+			$cond['food_id'] = $menu_id;
 			$result = $this->update($send,$cond);
 		}
 		
 		//menu_status = 3 = deleted product
 		public function product_delete	(){
 			extract($_POST);
-			$this->table = 'tbl_menus';
-			$send['menu_status'] = '3';
-			$cond['menu_id'] = $menu_id;
+			$this->table = 'tbl_food';
+			$send['food_status'] = '3';
+			$cond['food_id'] = $menu_id;
 			$result = $this->update($send,$cond);
 		}
 		
 		public function product_add(){
 			global $conn;
 			extract($_POST);
-			$this->table = 'tbl_menus';
+			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
 			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_img'] = $menu_code.".png";
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
+			$send['food_code'] = $menu_code;
+			$send['food_img'] = $menu_code.".png";
+			$send['food_title'] = strtolower($data[0]['value']);
+			$send['food_desc'] = $data[1]['value'];
 			$send['menu_price'] = $data[2]['value'];
 			$send['menu_status'] = $data[6]['value'];
 			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
+		//	$send['uom'] = $data[4]['value'];    
+			$send['food_quantity'] = $data[3]['value'];
 			
 			$id = $this->insert($send); 
 			if($id > 0)
