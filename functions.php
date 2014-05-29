@@ -13,6 +13,22 @@
   		    echo $json_data;
 		}
 		
+		public function get_distinct_class(){
+			global $conn;
+			extract($_POST);
+			$query = $conn->query("SELECT DISTINCT  `class_desc` ,  `class_id` FROM tbl_cat_class" );			
+			$results = $query->fetchAll(PDO::FETCH_ASSOC);
+			$json_data = json_encode($results);
+  		    echo $json_data;
+		}
+		
+		/************PRODUCTS**************/
+		/*
+		  Author : Mahalia Rose
+		  Function: search
+		  Desc: Search product
+		  Params: {Post Data with search value and branch_id of the staff logged in.}
+		*/
 		public function search(){
 			global $conn;
 			extract($_POST);
@@ -25,6 +41,12 @@
 			echo $results;    
 		}
 		
+		
+		/*
+		  Author : Mahalia Rose
+		  Function: get_product
+		  Desc: Get Specific Product based on the food_id
+		*/
 		public function get_product(){
 			global $conn;
 			extract($_POST);
@@ -35,6 +57,11 @@
 			echo $results;  
 		}
 		
+		/*
+		  Author : Mahalia Rose
+		  Function: product_edit
+		  Desc: Edit Product
+		*/
 		public function product_edit(){
 			extract($_POST);
 			$this->table = 'tbl_food';
@@ -59,8 +86,12 @@
 			$cond['food_id'] = $menu_id;
 			$result = $this->update($send,$cond);
 		}
-		
-		//menu_status = 3 = deleted product
+		/*
+		  Author : Mahalia Rose
+		  Function: product_delete
+		  Desc: Delete product
+		  Note: menu_status:3  - deleted product
+		*/
 		public function product_delete	(){
 			extract($_POST);
 			$this->table = 'tbl_food';
@@ -68,10 +99,15 @@
 			$cond['food_id'] = $menu_id;
 			$result = $this->update($send,$cond);
 		}
-		
+		/*
+		  Author : Mahalia Rose
+		  Function: product_add
+		  Desc: Add Product
+		 */
 		public function product_add(){
 			global $conn;
 			extract($_POST);
+			
 			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
@@ -84,21 +120,26 @@
 			$send['menu_price'] = $data[2]['value'];
 			$send['menu_status'] = $data[6]['value'];
 			$send['menu_category'] = strtolower($data[5]['value']);
-		//	$send['uom'] = $data[4]['value'];    
 			$send['food_quantity'] = $data[3]['value'];
 			
-			$id = $this->insert($send); 
-			if($id > 0)
-			{
-			   $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
-			   $img_required['folder'] = 'images/menu';
-			   $img_required['title'] = $menu_code;
-			   $image = json_encode($img_required, true);
-			   echo $this->save_image_to_folder($image);
-			}else{
-			  echo 0;
-			}			
+			print_r($send);
+			
+			// $id = $this->insert($send); 
+			// if($id > 0)
+			// {
+			   // $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
+			   // $img_required['folder'] = 'images/menu';
+			   // $img_required['title'] = $menu_code;
+			   // $image = json_encode($img_required, true);
+			   // echo $this->save_image_to_folder($image);
+			// }else{
+			  // echo 0;
+			// }			
 		}
+		
+		/************PRODUCTS**************/
+		
+		
 		 /*
 		 Author: Mahalia Rose
 		 Function: save_image_to_folder
@@ -538,7 +579,6 @@
 			 $results['count_orders'] = $total_order;
 			 $json_data = json_encode($results);
   		     echo $json_data;
-
 		} 
 		
 		/*

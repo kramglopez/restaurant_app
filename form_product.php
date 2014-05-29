@@ -114,14 +114,6 @@
 			   </div>
 			  </div>
 			  
-			  <div class="form-group">
-				<label for="inp_menu_uom" class="col-sm-3 control-label">Unit Of Measurement</label>
-				<div class="col-sm-8">
-				  <input type="text" class="form-control" id="inp_menu_uom" name="inp_menu_uom" >
-				</div>
-			  </div>
-			  
-			  
 			  <div class="form-group">			  
 			   <label for="lbl_status" class="col-sm-3 control-label">Status</label>
 			   <div class="col-sm-8">

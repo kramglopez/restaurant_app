@@ -3,45 +3,74 @@ var list_distinct_category = [];
 
 	
 $(document).ready(function(){
-	var branch_id;
-	$.ajax({
-			url: '../ifoods/controller.php',
-			data: {function_name: 'get_profile'},
-			type: "POST",
-			success: function(response){
-				var obj = jQuery.parseJSON(response);
-				branch_id = obj[0]['branch_id'];
-			}
-	});
+	var branch_id = '';
+	
+	if(branch_id == '')
+	{
+		$.ajax({
+				type: "POST",
+				url: 'controller.php',
+				data: {function_name: 'get_profile'},
+				success: function(response){
+					var obj = jQuery.parseJSON(response);
+					console.log(obj);
+					branch_id = obj[0]['branch_id'];
+				}
+		});
+	}
 
 	var win_width = window.innerWidth/1.3;
 	var win_height = window.innerHeight/1.05;
 	
 	function set_distinct_category(){
-	var data = {function_name: 'get_distinct_category', branch_id: branch_id};
-	$.ajax({
-		url: '../ifoods/controller.php',
-		data: data,
-		type: "POST",
-		success: function(response){
-		   if(response != '')
-		   {
-			   var obj = jQuery.parseJSON(response);
-			   $('#inp_menu_cat').find('option').remove();
-			   $('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'').text('Choose one')).prop('selected', true);
-					
-			   $.each(obj, function(k, v) {
-						$('form').find('#inp_menu_cat').append($("<option></option>").attr("value",v.menu_category).text(v.menu_category)); 
-				 });
+		var data = {function_name: 'get_distinct_category', branch_id: branch_id};
+		$.ajax({
+			type: "POST",
+			url: "controller.php",
+			data: data,
+			success: function(response){
+			   if(response != '')
+			   {
+				   var obj = jQuery.parseJSON(response);
+				   $('#inp_menu_cat').find('option').remove();
+				   $('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'').text('Choose one')).prop('selected', true);
+						
+				     $.each(obj, function(k, v) {
+							$('form').find('#inp_menu_cat').append($("<option></option>").attr("value",v.menu_category).text(v.menu_category)); 
+					 });
+				   
+				   $('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'Other Category').text('Other Category'));
+					 
+				}else{
+						$('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'').text('No Categories'));
+				}
 			   
-			   $('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'Other Category').text('Other Category'));
-				 
-			}else{
-					$('form').find('#inp_menu_cat').append($("<option></option>").attr("value",'').text('No Categories'));
 			}
-		   
-		}
-	});
+		});
+	}
+	
+	function set_distinct_class(){
+		var data = {function_name: 'get_distinct_class'};
+		$.ajax({
+			url: 'controller.php',
+			data: data,
+			type: "POST",
+			success: function(response){
+			   if(response != '')
+			   {
+				   var obj = jQuery.parseJSON(response);
+				   $('#inp_menu_class').find('option').remove();
+				   $('form').find('#inp_menu_class').append($("<option></option>").attr("value",'').text('Choose one')).prop('selected', true);
+						
+				   $.each(obj, function(k, v) {
+							$('form').find('#inp_menu_class').append($("<option></option>").attr("value",v.class_desc).text(v.class_desc)); 
+					 });
+				 }else{
+						$('form').find('#inp_menu_class').append($("<option></option>").attr("value",'').text('No Class Available'));
+				}
+			   
+			}
+		});
 	}
 	
 	$('#inp_menu_cat').change(function(){
@@ -63,7 +92,7 @@ $(document).ready(function(){
 			Yes: function() {
 				var data = {function_name: 'product_delete', branch_id: branch_id, menu_id: menu_id};
 				$.ajax({
-					url: '../ifoods/controller.php',
+					url: 'controller.php',
 					data: data,
 					type: "POST",
 					success: function(data){
@@ -78,7 +107,7 @@ $(document).ready(function(){
 	});
 	
 	$('#dialog-form-category').dialog({
-	autoOpen: false,
+	  autoOpen: false,
       height: 200,	 
       width: 400,
       position: ['center',20],
@@ -119,7 +148,7 @@ $(document).ready(function(){
 		var data = {menu_id: menu_id, function_name: 'get_product'};
 		
 		$.ajax({
-			url: '../ifoods/controller.php',
+			url: 'controller.php',
 			data: data,
 			type: "POST",
 			success: function(response){
@@ -141,16 +170,11 @@ $(document).ready(function(){
 	  create: function( event, ui ) {	
 				$('#dialog-form').load('form_product.php #manage_product');  
 				set_distinct_category(); 
-				$( "#dialog-form #radioset_best_seller" ).buttonset();
-				$( "#dialog-form #radioset_latest_product" ).buttonset();
-				$( "#dialog-form #radioset_promo" ).buttonset(); 
-				$( "#dialog-form #radioset_status" ).buttonset();
 	  },
       buttons: {
         "Update Product": function() {
 			var ok = true;
 			$('#manage_product input[type=text], #manage_product textarea').each(function(){
-				console.log($(this).val());
 				if(!$(this).val()){	$(this).css('background-color', '#FF8073'); ok = false;}
 				else{ $(this).css('background-color', '#fafafa'); }			
 			});
@@ -169,7 +193,6 @@ $(document).ready(function(){
 	$('form').find('#btn_submit_product').click(function(){
 		var ok = true;
 		$('#manage_product input, #manage_product textarea').each(function(){
-			console.log($(this).val());
 			if(!$(this).val()){	$(this).css('background-color', '#FF8073'); ok = false;	}
 			else{	$(this).css('background-color', '#fafafa');	}			
 		});
@@ -182,14 +205,15 @@ $(document).ready(function(){
 		var menu_id = $('form').find('#img_base_container').text();
 		//console.log(menu_id);
 		var data = {post: $('#manage_product').serializeArray() , img: menu_id, function_name: function_name, branch_id: branch_id, menu_id: menu_id};
-		$.ajax({
-			url: '../ifoods/controller.php',
-			data: data,
-			type: "POST",
-			success: function(data){
-				console.log(data);
-			}
-		});
+		alert('submit_product');
+		// $.ajax({
+			// url: 'controller.php',
+			// data: data,
+			// type: "POST",
+			// success: function(data){
+				// alert(data);
+			// }
+		// });
 	}
 	
 //Convert image_file to base64
@@ -218,9 +242,11 @@ $('html').find("#inp_menu_image").change(function()	{	readImage( this );	});
 	$('form').find('#btn_search').click(function()
 	{
 		var search_val = $('#inp_search').val();
+		
 		var data = {search_val: search_val , function_name: 'search', branch_id: branch_id};
+		console.log(data);
 		$.ajax({
-			url: '../ifoods/controller.php',
+			url: 'controller.php',
 			data: data,
 			type: "POST",
 			success: function(response){
@@ -272,6 +298,7 @@ $('html').find("#inp_menu_image").change(function()	{	readImage( this );	});
 			},
 			error: function(){	console.log('error');	}
 		});
+	
 	});
 	
 
@@ -302,6 +329,7 @@ $('html').find("#inp_menu_image").change(function()	{	readImage( this );	});
 							$('div#content_bottom').html("");
 							$('div#content_bottom').append(response);
 							set_distinct_category();
+							set_distinct_class();
 							$.isLoading("hide");
 						}
 					});
