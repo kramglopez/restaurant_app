@@ -5,7 +5,9 @@
 		public function get_distinct_category(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT DISTINCT `menu_category`  FROM `tbl_menus` WHERE branch_id = $branch_id" );
+			$query = $conn->query("SELECT DISTINCT tcm.menu FROM tbl_cat_menu tcm 
+								   JOIN tbl_food tf ON tcm.menu_id=tf.menu_id
+								   WHERE tf.branch_id = $branch_id" );			
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$json_data = json_encode($results);
   		    echo $json_data;
@@ -14,7 +16,9 @@
 		public function search(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT * FROM  tbl_menus WHERE menu_name LIKE '%$search_val%' and branch_id = $branch_id and menu_status != 3" );
+			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_title 
+								   LIKE '%$search_val%' OR food_desc LIKE '%$search_val%' 
+														AND branch_id = $branch_id AND food_status != 3" );
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
 			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
@@ -24,7 +28,7 @@
 		public function get_product(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT * FROM  tbl_menus WHERE menu_id = $menu_id");
+			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_id = $menu_id");
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
 			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
@@ -33,7 +37,7 @@
 		
 		public function product_edit(){
 			extract($_POST);
-			$this->table = 'tbl_menus';
+			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
@@ -140,9 +144,9 @@
 		public function login_user(){		 
 			global $conn;
 			extract($_POST);
-		
-			$sql_que = "SELECT u.*,ut.user_type,(SELECT res_id from tbl_restaurant_branches where branch_id = u.branch_id) as res_id from tbl_users u join tbl_user_types ut on u.user_type_id =ut.user_type_id where 
-                   u.username= '".$usr."' and u.password ='".$pwd."' and u.user_type_id != 1 ";
+		        
+			$sql_que = "SELECT u.*,ut.user_type,(SELECT restaurant_id from tbl_branch where branch_id = u.branch_id) as res_id from tbl_users u join tbl_cat_user_type ut on u.user_type_id =ut.user_type_id where 
+                   u.username= '".$usr."' and u.password = '".$pwd."' and u.user_type_id != 1";
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
             $json_data = json_encode($results);
@@ -474,24 +478,24 @@
 			global $conn;
 			extract($_POST);
 
-		    $this->table = 'tbl_restaurant_name';
+		    $this->table = 'tbl_restaurant';
 		    $results['count_rest'] = $this->select_count();
-			$this->table = 'tbl_restaurant_branches';
+			$this->table = 'tbl_branch';
 		    $results['count_branches'] = $this->select_count();
 			$this->table = 'tbl_orders';
 		    $results['count_orders'] = $this->select_count();
 
-			$sql_que = "SELECT res_id,res_desc,contact_no,address,branch_no, 
+			$sql_que = "SELECT restaurant_id,restaurant,restaurant_contact_no,restaurant_address,
 							(SELECT t_u.fname FROM  tbl_users t_u JOIN 
-									tbl_restaurant_branches t_b ON t_u.branch_id = t_b.branch_id 
-									WHERE t_b.res_id = t_n.res_id AND t_u.user_type_id = 2 limit 1) as admin_fname,
+									tbl_branch t_b ON t_u.branch_id = t_b.branch_id 
+									WHERE t_b.restaurant_id = t_n.restaurant_id AND t_u.user_type_id = 2 limit 1) as admin_fname,
 (							SELECT t_u.lname FROM  tbl_users t_u JOIN 
-									tbl_restaurant_branches t_b ON t_u.branch_id = t_b.branch_id 
-									WHERE t_b.res_id = t_n.res_id AND t_u.user_type_id = 2 limit 1) as admin_lname,
+									tbl_branch t_b ON t_u.branch_id = t_b.branch_id 
+									WHERE t_b.restaurant_id = t_n.restaurant_id AND t_u.user_type_id = 2 limit 1) as admin_lname,
 							(SELECT COUNT(*) FROM  tbl_orders t_o JOIN 
-									tbl_restaurant_branches t_b ON t_o.branch_id = t_b.branch_id 
-									WHERE t_b.res_id = t_n.res_id) as order_count
-							FROM tbl_restaurant_name t_n";
+									tbl_branch t_b ON t_o.branch_id = t_b.branch_id 
+									WHERE t_b.restaurant_id = t_n.restaurant_id) as order_count
+							FROM tbl_restaurant t_n";
 			$query = $conn->query($sql_que);
 
             $results['lists'] = $query->fetchAll(PDO::FETCH_ASSOC);
