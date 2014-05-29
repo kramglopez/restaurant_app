@@ -97,7 +97,7 @@
 			<tr id = "<?php echo $info['user_id'];?>">
 				<td>
 				 <?php 
-				   echo ucwords($info['res_desc']);
+				   echo ucwords($info['restaurant']);
 				  // $name = $var_func->join_string(array($info['fname'],$info['mname'],$info['lname']));
 				   //echo $name;
 				 
@@ -107,10 +107,10 @@
 				 <?php echo ucfirst($info['admin_fname']).' '.ucfirst($info['admin_lname'])?>
 				</td>
 				<td>
-				 <?php echo $info['contact_no'];?>
+				 <?php echo $info['restaurant_contact_no'];?>
 				</td>
 				<td>
-				 <?php echo $info['address'];?>
+				 <?php echo $info['restaurant_address'];?>
 				</td>
 				<td>
 				 <?php echo $info['order_count'];?>
