@@ -216,52 +216,6 @@
 		   $_SESSION['auth'] = $user_info;
 
 		}
-		/*
-		  Author : Justin Xyrel 
-		  Date: 04/24/14
-		  Function: update_profile
-		  Desc: updates the current information of the user including the password of the account
-          Params: post data which is the data to be updated
-		*/ 	
-		public function update_profile(){
-			extract($_POST['params']);
-			$this->table = 'tbl_users';
-			$wh = array('user_id' => $user_id);
-         
-			if(!isset($_SESSION)){
-				session_start();
-			} 
-
-		     $this->validate_email_address($form[13]['value'],$user_id);
-
-			foreach($form as &$data){     
-				if($data['name'] !== 'email_add_verify' && $data['name'] !== 'current_password' ){
-					if($data['name'] == 'password' && !empty($data['value']) ){
-					
-						$data['value'] = sha1($data['value']);
-					}
-					if($data['name'] == 'birth_date'){
-						$data['value'] = strtotime($data['value']);
-					}
-					$arr[$data['name']] = $data['value'];
-				}
-			}
-
-			  unset($arr['radio']); // does not belong to DB fields
-			if(empty($arr['password'])){
-			  unset($arr['password']);
-			}
-			$results =  $this->update($arr,$wh);
-
-			if($results){
-			 foreach($arr as $key=>&$value){
-			   $_SESSION['auth'][0][$key] = $value;
-			 }
-			}
-
-			echo $results;
-			
-		}
 		
 		/*
 		  Author : Justin Xyrel 
@@ -278,6 +232,65 @@
 			session_destroy();
 		}
 		
+		/*
+		  Author : Justin Xyrel 
+		  Date: 04/24/14
+		  Function: update_profile
+		  Desc: updates the current information of the user including the password of the account
+          Params: post data which is the data to be updated
+		*/ 	
+		public function update_profile(){
+			extract($_POST['params']);
+         
+			if(!isset($_SESSION)){
+				session_start();
+			} 
+             
+		     //$this->validate_email_address($form[13]['value'],$user_id);
+            
+			foreach($form as &$data){     
+				if($data['name'] !== 'email_add_verify' && $data['name'] !== 'current_password' ){
+					if($data['name'] == 'password' && !empty($data['value']) ){
+					
+						$data['value'] = sha1($data['value']);
+					}
+					if($data['name'] == 'birth_date'){
+						$data['value'] = strtotime($data['value']);
+					}
+					if($data['name'] == 'gender'){
+					    $data['name'] = 'gender_id';
+						$data['value'] = $this->get_gender_id($data['value']);
+					}
+				/*	if($data['name'] == 'country'){
+					    $data['name'] = 'country_id';
+						$data['value'] = $this->get_country_id($data['value']);
+					}*/
+				    if($data['name'] != 'email_add'){
+				     $arr[$data['name']] = $data['value'];
+					}
+				}
+			}
+		    unset($arr['radio']); // does not belong to DB fields
+			
+			if(empty($arr['password'])){
+			  unset($arr['password']);
+			}
+			/*update record in DB*/
+			$this->table = 'tbl_users';
+			$wh = array('user_id' => $user_id);
+			$results =  $this->update($arr,$wh);
+			
+			if($results){
+			 foreach($arr as $key=>&$value){
+			   $_SESSION['auth'][0][$key] = $value;
+			 }
+			}
+
+			echo $results;
+			
+		}
+		
+
 		 /*
 		  Author : Justin Xyrel 
 		  Date: 05/01/14
@@ -295,9 +308,10 @@
 		     $fields = array('fname','lname','middle');
 			  $res_id = $_SESSION['auth'][0]['res_id'];
 
-			$sql_que = "SELECT u.*,ut.user_type,rb.branch_desc from tbl_users u join tbl_user_types ut on u.user_type_id =ut.user_type_id 
-						join tbl_restaurant_branches rb on u.branch_id = rb.branch_id where 
-                   rb.res_id= ".$res_id." and u.user_type_id = 4 ";
+			$sql_que = "SELECT u.*,ut.user_type,rb.branch_name FROM tbl_users u
+						JOIN tbl_cat_user_type ut ON u.user_type_id =ut.user_type_id 
+						JOIN tbl_branch rb ON u.branch_id = rb.branch_id WHERE 
+						rb.restaurant_id= 9 AND u.user_type_id = 4 ";
 		 //   var_dump($sql_que);die();
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -320,37 +334,38 @@
 				session_start();
 			}		
 			
-			$fields = array('fname','lname','middle');
-			$res_id = $_SESSION['auth'][0]['res_id'];
-
-			$sql_que = 	"
-						SELECT rest_class_id, res_class_desc, insert_date, update_date, au_user_id
-						FROM tbl_restaurant_class
+			/*$fields = array('fname','lname','middle');
+			$res_id = $_SESSION['auth'][0]['res_id'];*/
+            $this->table = 'tbl_cat_class';
+		    $json_data= json_encode($this->select_all());
+			/*$sql_que = 	"
+						SELECT class_id, class_desc, insert_date, update_date, au_user_id
+						FROM tbl_cat_class
 						";	   
 			
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
-            $json_data = json_encode($results);
+            $json_data = json_encode($results);*/
   		    echo $json_data;
 		}
 		
 		public function add_class(){
 			global $conn;
 			extract($_POST);
-			$this->table = 'tbl_menus';
+			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
 			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_img'] = $menu_code.".png";
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
-			$send['menu_price'] = $data[2]['value'];
-			$send['menu_status'] = $data[6]['value'];
-			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
+			$send['food_code'] = $menu_code;
+			$send['food_img'] = $menu_code.".png";
+			$send['food_title'] = strtolower($data[0]['value']);
+			$send['food_desc'] = $data[1]['value'];
+			$send['food_newprice'] = $data[2]['value'];
+			$send['food_status'] = $data[6]['value'];
+			$send['menu_id'] = strtolower($data[5]['value']);
+			//$send['uom'] = $data[4]['value'];    
+			$send['food_quantity'] = $data[3]['value'];
 			
 			$id = $this->insert($send); 
 			if($id > 0)
@@ -421,9 +436,9 @@
 			session_start();
 		  }		
 		  $res_id = $_SESSION['auth'][0]['res_id'];
-		  $this->table = 'tbl_restaurant_branches';
-		  $fields = array('branch_id','branch_desc');
-		  $condition = array('res_id'=>$res_id);
+		  $this->table = 'tbl_branch';
+		  $fields = array('branch_id','branch_name');
+		  $condition = array('restaurant_id'=>$res_id);
 		  $result = $this->select_fields_where($fields,$condition);
 		  echo json_encode($result);
 		}
@@ -453,8 +468,8 @@
 		
 		public function validate_email_address($email_address,$user_id = 0){
 	       $this->table = 'tbl_users';
-		 //  var_dump($user_id);die();
-		   $email_exist  = $this->check_existence("email_add = '".$email_address."' and user_id != '".$user_id."'" );
+		 /*check existence of username*/
+		   $email_exist  = $this->check_existence("username = '".$email_address."' and user_id != '".$user_id."'" );
 		 //  var_dump($email_exist);
 		   $is_valid_email = filter_var($email_address,FILTER_VALIDATE_EMAIL);
 		    if($email_exist){
@@ -622,6 +637,38 @@
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
             $json_data = json_encode($results);
   		    echo $json_data;
+		}
+		
+		/**
+		  Author : Justin Xyrel 
+		  Date: 05/29/14
+		  Function: get_gender_id
+		  Desc: get gender id in tbl_cat_gender table -_"
+ 		  Params: gender(F,M)
+
+		**/
+		
+		public function get_gender_id($gender){
+		   $this->table = 'tbl_cat_gender';
+		   
+		   $result = $this->select_fields_where(array('gender_id'),array('gender_in' => $gender));
+		   return $result[0]['gender_id'];
+		}
+		
+
+		/**
+		  Author : Justin Xyrel 
+		  Date: 05/29/14
+		  Function: get_country_list
+		  Desc: get all country list -_"
+ 		  Params: NONE
+		**/
+		
+		public function get_country_list(){
+		   $this->table = 'tbl_cat_country';
+		   
+		   $result = json_encode($this->select_all());
+		   return $result;
 		}
 		
 

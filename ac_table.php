@@ -43,7 +43,6 @@ class table {
   $q = $conn->query($statement);
   $results = $q->fetchAll(PDO::FETCH_ASSOC);
   $results = json_encode($results);
- //var_dump($results);die();
   return $results;
  }
 
@@ -122,7 +121,7 @@ class table {
   }else{
    $statement = "UPDATE {$this->table} SET $updates" ;
   }
-//  var_dump($statement);die();
+//var_dump($statement);die();
   if ($conn->exec($statement)) {
    return true;
   }else{

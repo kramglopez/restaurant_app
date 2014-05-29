@@ -2,11 +2,27 @@
 
 $(document).ready(function(){
  if($('#update_form').length > 0){
+     $.ajax({
+			type:'POST' ,
+            url:'controller.php',
+            data : {
+                    function_name : 'get_country_list', 
+                   },
+			success: function (response){  
+				var parse_json = $.parseJSON(response);		
+                if($('select[name=country_id]').children('option').length <= 1){				
+					$.each(parse_json,function(key,value){
+				 
+						$('select[name=country_id]').append('<option value='+value['country_id']+'>'+value['country']+'</option>')
+					});
+				}
+			}
+		});
 	$("#validation_msg").hide();
 
     $('#btn_edit').click(function(event){
 	    event.stopImmediatePropagation();
-	   show_hide($('div#update_profile'),$('div#view_profile'));
+	    show_hide($('div#update_profile'),$('div#view_profile'));
 	});
 	
     $('#btn_close').click(function(event){
@@ -23,15 +39,15 @@ $(document).ready(function(){
 
 
 	
-    $("#btn_submit").click(function(event){
+    $("#btn_submit").on('click',function(event){
       event.stopImmediatePropagation();
       var validation_holder = 0;
       var firstname = $("input#fname");
       var lastname = $("input#lname");
-      var street = $("input#street");
+      var street = $("input#address");
       var town_city = $("input#town_city");
       var state_province = $("input#state_province");
-      var country = $('select[name=country]');
+      var country = $('select[name=country_id]');
       var birth_date = $('input#birth_date');
       var contact_no = $('input#contact_no');
       var email_add = $('input#email_add');
@@ -44,13 +60,12 @@ $(document).ready(function(){
       var required = [firstname,lastname,street,town_city,country,birth_date,contact_no,email_add,curr_pass];
       
       var count_err = check_required_fields(required);	  
-      
-      
       var match = [{ m: [ pass_match.val(), pass.val() ] }];
-      
-      var count = 0;
+   //   alert(count_err);
+   //   var count = 0;
 	//  alert(count_err);
 	  if(count_err > 0){
+
 		   // $(curr_pass).css('background-color', '#FF8073');
 			 validation_holder = 1;
 	  }
@@ -64,6 +79,7 @@ $(document).ready(function(){
 	     $(pass_match).css('background-color', '#FFFFFF');
 
 	  }
+console.log(validation_holder);
 //console.log($("#update_form").serializeArray());
       if(validation_holder == 0) {
          $.ajax({
@@ -151,15 +167,15 @@ $(document).ready(function(){
 				var arr = {'lname': user_profile['lname'],
 						'mname' : user_profile['mname'],
 						'fname' : user_profile['fname'],
-						'unit_no' : user_profile['unit_no'],
-						'building_name' : user_profile['building_name'],
-					    'street' : user_profile['street'],
+			/*			'unit_no' : user_profile['unit_no'],
+						'building_name' : user_profile['building_name'],*/
+					    'address' : user_profile['address'],
 						'town_city' : user_profile['town_city'],
 						'state_province' : user_profile['state_province'],
 						'contact_no' :user_profile['contact_no'],
 						'email_add' : user_profile['email_add'],
 						'birth_date' : user_profile['birth_date'],
-						'country' : user_profile['country'],
+						'country' : user_profile['country_id'],
 						'gender' : user_profile['gender'],
 						'cur_p' : user_profile['password'],
 						'u_id' : user_profile['user_id'],
@@ -174,6 +190,11 @@ $(document).ready(function(){
 						}
 						$('input[name=gender]').filter('[value='+value+']').prop('checked',true);
 						$('label#'+key).text((value.toUpperCase() == 'F') ? 'Female' : 'Male');
+					}else if( key == 'country'){
+				//	alert($('select#country_id').find('option[value='+value+']').text());
+						//$('label#country').text('');
+					    $('label#country').text($('select#country_id').find('option[value='+value+']').text());
+						$('select#country_id').find('option[value='+value+']').prop('selected',true);
 					}else{
 						$('input#'+key).val(value);
 						$('select#'+key).val(value);
@@ -187,15 +208,6 @@ $(document).ready(function(){
 	
 });
   
-  $('#bannerBox').removeAttr('onclick');
-  if (typeof device !== 'undefined')
-  {
-    element = document.getElementById('device');
-    'Device Name: '     + device.name     + '<br />' + 
-      'Device PhoneGap: ' + device.phonegap + '<br />' + 
-      'Device Platform: ' + device.platform + '<br />' + 
-      'Device UUID: '     + device.uuid     + '<br />' + 
-      'Device Version: '  + device.version  + '<br />';
-  }
+ 
 
 
