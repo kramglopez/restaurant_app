@@ -60,13 +60,16 @@
 		
 		/*END OF STAFF*/
 		
+
+
+
 		
 		function build_dialog(element_id){
 			$('#'+element_id).dialog({
 				height: 'auto',
 				width: 'auto',
-				position: 'top',
-				zIndex: 999,
+				// position: 'top',
+				// zIndex: 999,
 				autoOpen: false,
 				modal: true,
  				buttons: {
@@ -517,7 +520,31 @@
 				
 				buttons: {
 					Save: function() {
-					
+
+						if($("input#tb_class").val() == ""){
+							$("input#tb_class").css({'background-color' : '#f2dede'});
+							$("div#error_msg").show();
+						}
+						else {
+							$.ajax({
+								url: 'controller.php',
+								data: { 
+										'form' : $("#add_class_form").serializeArray(),
+										'function_name':'add_class',
+									  },
+								type: "POST",
+								success: function(response){
+									// console.log(response);
+									// alert(response);
+									$( "#dialog_add_class" ).dialog('close');
+
+									build_dialog('dialog_new_class_confirm');
+									$('#dialog_new_class_confirm').dialog('open'); 
+
+								}
+							});
+						}
+							
 					},
 					Cancel: function() {
 						$( this ).dialog( "close" );

@@ -324,8 +324,8 @@
 			$res_id = $_SESSION['auth'][0]['res_id'];
 
 			$sql_que = 	"
-						SELECT rest_class_id, res_class_desc, insert_date, update_date, au_user_id
-						FROM tbl_restaurant_class
+						SELECT class_id, class_desc, insert_date, update_date, au_user_id
+						FROM tbl_cat_class
 						";	   
 			
 			$query = $conn->query($sql_que);
@@ -337,32 +337,19 @@
 		public function add_class(){
 			global $conn;
 			extract($_POST);
-			$this->table = 'tbl_menus';
-			$data = $_POST['post'];
-			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
-			
-			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_img'] = $menu_code.".png";
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
-			$send['menu_price'] = $data[2]['value'];
-			$send['menu_status'] = $data[6]['value'];
-			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
-			
-			$id = $this->insert($send); 
+			$class = $_POST['form'][0]['value'];
+			// $status = $_POST['form'][1]['value'];
+			$this->table = 'tbl_restaurant_class';
+			$class_data['res_class_desc'] = $class;
+			$id = $this->insert($class_data);
+			/*
 			if($id > 0)
 			{
-			   $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
-			   $img_required['folder'] = 'images/menu';
-			   $img_required['title'] = $menu_code;
-			   $image = json_encode($img_required, true);
-			   echo $this->save_image_to_folder($image);
+				echo $id;
 			}else{
-			  echo 0;
-			}			
+				echo 0;
+			}		
+			*/
 		}
 		/********** END: CLASS **********/
 		
