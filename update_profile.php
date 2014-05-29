@@ -96,7 +96,7 @@ $(function() {
 									<h3>Address</h3>
 								</td>
 							</tr>
-							<tr>
+<!--							<tr>
 								<td class="padding_left">Unit No.</td>
 								<td class="padding_right"><label name="unit_no" id="unit_no"/></label></td>
 							</tr>
@@ -104,6 +104,7 @@ $(function() {
 								<td class="padding_left">Building No./ Name</td>
 								<td class="padding_right"><label name="building_name" id="building_name"/></label></td>
 							</tr>
+							-->
 							<tr>
 								<td class="padding_left">Street</td>
 								<td class="padding_right"><label name="street" id="street"/></label></td>
@@ -192,7 +193,7 @@ $(function() {
 								<tr>
 									<td colspan="2" style="text-align:left;"><h3>Address</h3></td>
 								</tr>
-								<tr>
+				<!--			<tr>
 									<td class="padding_left">Unit No.</td>
 									<td class="padding_right"><input class="form-control" type="text" name="unit_no" id="unit_no"/></td>
 								</tr>
@@ -200,9 +201,10 @@ $(function() {
 									<td class="padding_left">Building No./ Name</td>
 									<td class="padding_right"><input class="form-control" type="text" name="building_name" id="building_name"/></td>
 								</tr>
+								-->
 								<tr>
 									<td class="padding_left">Street *</td>
-									<td class="padding_right"><input class="form-control" type="text" name="street" id="street"/></td>
+									<td class="padding_right"><input class="form-control" type="text" name="address" id="address"/></td>
 								</tr>
 								<tr>
 									<td class="padding_left">City/ Town *</td>
@@ -215,12 +217,12 @@ $(function() {
 								<tr>
 									<td class="padding_left">Country *</td>
 									<td class="padding_right">
-										<select class="res_select form-control"  id = "country" name="country">
+										<select class="res_select form-control"  id = "country_id" name="country_id">
 											<option value=""></option>
-											<option value="Philippines">Philippines</option>
+										<!--	<option value="Philippines">Philippines</option>
 											<option value="Australia">Australia</option>
 											<option value="Singapore">Singapore</option>
-											<option value="Japan">Japan</option>
+											<option value="Japan">Japan</option>-->
 										</select>
 									</td>
 								</tr>
@@ -237,7 +239,7 @@ $(function() {
 								</tr>
 								<tr>
 									<td class="padding_left">Email Address *</td>
-									<td class="padding_right"><input class="form-control" type="text" name="email_add" id="email_add" placeholder="Enter your email"/></td>
+									<td class="padding_right"><input class="form-control" type="text" name="email_add" id="email_add" placeholder="Enter your email" readonly /></td>
 								</tr>
 
 								<tr>
