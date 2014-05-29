@@ -3,13 +3,22 @@ var list_distinct_category = [];
 
 	
 $(document).ready(function(){
-	var branch_id = 9;
+	var branch_id;
+	$.ajax({
+			url: '../ifoods/controller.php',
+			data: {function_name: 'get_profile'},
+			type: "POST",
+			success: function(response){
+				var obj = jQuery.parseJSON(response);
+				branch_id = obj[0]['branch_id'];
+			}
+	});
 
 	var win_width = window.innerWidth/1.3;
 	var win_height = window.innerHeight/1.05;
 	
 	function set_distinct_category(){
-	var data = {function_name: 'get_distinct_category', branch_id: 9};
+	var data = {function_name: 'get_distinct_category', branch_id: branch_id};
 	$.ajax({
 		url: '../ifoods/controller.php',
 		data: data,
@@ -52,7 +61,7 @@ $(document).ready(function(){
 		},
 		buttons: {
 			Yes: function() {
-				var data = {function_name: 'product_delete', branch_id: 9, menu_id: menu_id};
+				var data = {function_name: 'product_delete', branch_id: branch_id, menu_id: menu_id};
 				$.ajax({
 					url: '../ifoods/controller.php',
 					data: data,
@@ -114,6 +123,7 @@ $(document).ready(function(){
 			data: data,
 			type: "POST",
 			success: function(response){
+				
 				var obj = jQuery.parseJSON(response);
 				$('#dialog-form').find('#inp_menu_name').val(obj[0]['menu_name']);
 				$('#dialog-form').find('#inp_menu_desc').val(obj[0]['menu_desc']);
@@ -123,11 +133,19 @@ $(document).ready(function(){
 				$('#dialog-form').find('#inp_menu_cat').val(obj[0]['menu_category']);
 				$('#dialog-form').find('#inp_menu_status').val(obj[0]['menu_status']);
 				$('#manage_product').prepend('<div class="form-group temporary_image"><label for="image_view" class="col-sm-3 control-label">Image</label><div class="col-sm-8"><img id="image_view" src="data:image/png;base64,'+obj[0]['menu_img']+'" /></div></div>');
+				
 			}
 		});
 		$('html').find("#inp_menu_image").change(function()	{	readImage( this );	});
 	  },
-	  create: function( event, ui ) {	$('#dialog-form').load('form_product.php #manage_product');  set_distinct_category(); },
+	  create: function( event, ui ) {	
+				$('#dialog-form').load('form_product.php #manage_product');  
+				set_distinct_category(); 
+				$( "#dialog-form #radioset_best_seller" ).buttonset();
+				$( "#dialog-form #radioset_latest_product" ).buttonset();
+				$( "#dialog-form #radioset_promo" ).buttonset(); 
+				$( "#dialog-form #radioset_status" ).buttonset();
+	  },
       buttons: {
         "Update Product": function() {
 			var ok = true;
@@ -163,7 +181,7 @@ $(document).ready(function(){
 	function submit_product(function_name){
 		var menu_id = $('form').find('#img_base_container').text();
 		//console.log(menu_id);
-		var data = {post: $('#manage_product').serializeArray() , img: menu_id, function_name: function_name, branch_id: 9, menu_id: menu_id};
+		var data = {post: $('#manage_product').serializeArray() , img: menu_id, function_name: function_name, branch_id: branch_id, menu_id: menu_id};
 		$.ajax({
 			url: '../ifoods/controller.php',
 			data: data,
