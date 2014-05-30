@@ -4,7 +4,7 @@
 
         /*STAFF*/
 		
-		$('a#manager').on('click',function(event){
+		$('a#manager').unbind().on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
 			$.ajax({
@@ -100,10 +100,12 @@
 								success: function (response){ 
 									$("#dialog_staff").html("");
 									$("#dialog_staff").append(response);
-									
+									 
+									get_country_list('country');
+									 
 									$.each(obj,function(index,value){
 										var br_id = value['branch_id'];
-										var br_desc = value['branch_desc'];
+										var br_desc = value['branch_name'];
 									
 										$("select#branch_id").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
 									});
@@ -155,7 +157,7 @@
 										  },
 									type: "POST",
 									success: function(response){
-								//	  console.log(response);
+									  console.log(response);
 								      var obj = jQuery.parseJSON(response);
 									
 										if(obj['result']){
@@ -179,7 +181,7 @@
 														add_tbl_row += "<td>"+street.val()+" "+ town_city.val()+" "+ state_province.val()+"</td>";
 														add_tbl_row += "<td>"+contact_no.val()+"</td>";
 														add_tbl_row += "<td>"+email_add.val()+"</td>";
-														add_tbl_row += "<td>"+branch.text().trim()+"</td>";
+														add_tbl_row += "<td>"+$('select[name=branch_id] :selected').text().trim()+"</td>";
 														add_tbl_row += "<td>"+user_type+"</td>";
 														add_tbl_row += "<td>"+status+"</td>";
 														add_tbl_row += "<td><button id='update_stat'>"+btn_status+"</button></td>";
@@ -287,7 +289,8 @@
 		$('a#resadmin_report').one('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
-			$.isLoading({text:"Loading.. "});
+		//	$.isLoading("hide");
+		//	$.isLoading({text:"Loading.. "});
 			$.ajax({
 				type: 'POST',
 				url:'controller.php',
@@ -295,28 +298,31 @@
 				success: function (response){
 					var obj = jQuery.parseJSON(response);
 					var user_res_id = obj[0]['res_id'];
-					 
+					// console.log(user_res_id);
 					$.ajax({
 						type: 'POST',
 						url:'controller.php',
 						data: {'function_name':'restadmin_report','res_id' : user_res_id},
 						success: function (response){ 
-					//	console.log(response);
+					//  	console.log(response);
+						
 							$.ajax({
 								type: 'POST',
 								url:'restadmin_report.php',
 								data: {'data':response},
 								success: function (response){ 
-								$("body").isLoading("hide");
+						
 									$('div#content_bottom').html("");
 									$('div#content_bottom').append(response);
-									
+									$.isLoading("hide");
+									//alert('dog');
 								}	
 							});					
 						}
 					});	
                 }				
 			});
+		  //$.isLoading("hide");
 		});
 		
 		$('a#all_trans').one('click',function(event){
@@ -532,7 +538,7 @@
 		function do_show_home(element){
 		  if($('div#content_bottom').text().trim().length == 0){
 			$(element).click();
-			console.log($(element));
+			//console.log($(element));
 			
 		  }
         }		

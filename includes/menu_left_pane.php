@@ -175,6 +175,7 @@ $(document).ready(function(){
 					<li><a href='#'><span>Brand</span></a></li>
 					<li><a href='#' id='product'><span>Branches</span></a></li>
 					<li><a href='#' id='staff'><span>Add Branches</span></a></li>
+					<li><a href='#' id='resadmin_report'><span>Report</span></a></li>
 				</ul>
 			</li>
 			<li class='has-sub' style=""><a><span>TRANSACTIONS</span></a>
