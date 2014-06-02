@@ -68,7 +68,7 @@
 			$('#'+element_id).dialog({
 				height: 'auto',
 				width: 'auto',
-				// position: 'top',
+			    position: 'top',
 				// zIndex: 999,
 				autoOpen: false,
 				modal: true,
@@ -84,6 +84,7 @@
 		function dialog_add_staff(){
 			var win_width = window.innerWidth/1.3;
 			var win_height = window.innerHeight/1.05;
+			//alert('dadsdsa');
 			$( "#dialog_staff" ).dialog({
 				autoOpen: false,
 				height: win_height,	 
@@ -235,6 +236,7 @@
 			
 			if($('input#ut_id').val() == '4'){
 				$('div#manager').show();
+				do_show_home('a#all_trans');
 				$.isLoading("hide");
 			}
 			
@@ -363,15 +365,17 @@
 						success: function (response){ 
 							var obj = jQuery.parseJSON(response);
 							var total_invoice = 0;
-						//console.log(obj);
+						 console.log(obj);
 						   $('table#order_details').find('tbody').children('tr').remove();
 						   
 						   $.each(obj,function(index,value){
-						     var food_val = (!value['menu_name'] )?  value['mix_match_name'] : value['menu_name'];
-							 var price_per = parseFloat(value['total_payment']/value['quantity']).toFixed(2);
-							 var total_payment = parseFloat(value['total_payment']).toFixed(2);
-
-						      $('table#order_details').find('tbody').append("<tr><td>"+food_val+"</td><td>"+price_per+"</td><td>X</td><td>"+value['quantity']+"</td><td>"+total_payment+"</td></tr>");
+						     var food_val =  value['food_title'];
+							// var price_per = parseFloat(value['total_payment']/value['order_quantity']).toFixed(2);
+							// var total_payment = parseFloat(value['total_payment']).toFixed(2);
+							 var price_per = parseFloat(value['food_newprice']).toFixed(2);
+							 var total_payment = parseFloat(value['food_newprice'] * value['order_quantity']).toFixed(2);
+							
+						      $('table#order_details').find('tbody').append("<tr><td>"+food_val+"</td><td>"+price_per+"</td><td>X</td><td>"+value['order_quantity']+"</td><td>"+total_payment+"</td></tr>");
 							  total_invoice += parseInt(total_payment);
 						   });
 						       total_invoice = parseFloat(total_invoice).toFixed(2);

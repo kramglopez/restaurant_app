@@ -12,7 +12,7 @@
  //echo "<pre>", var_dump(json_decode($_POST['data'],true)), "</pre>";die();
    $data = json_decode($_POST['data'],true);
 
- //echo "<pre>", var_dump($data), "</pre>";die();
+   //echo "<pre>", var_dump($data), "</pre>";die();
 ?>
 <html >
 
@@ -97,7 +97,7 @@
 	   <h5 id= 'total_orders'>Total Orders: <?php echo $data['count_orders']; ?></h5>
 <?php 	
 		foreach($data['lists'] as $info){ 
-			$arr_add = array($info['unit_no'],$info['building_name'],$info['street'],$info['town_city'],$info['state_province'],$info['country']);
+			$arr_add = array($info['address'],$info['town_city'],$info['state_province'],$info['country']);
 			$address =  (empty($info['del_address'])) ? implode(' ',$arr_add) : $info['del_address'] ;
 			$customer_name = implode(' ',array($info['fname'],$info['mname'],$info['lname']));
 			$order_status = ($info['order_status'] == 'wconfirm') ? 'Waiting for Confirmation' : ucwords($info['order_status']); 
