@@ -8,11 +8,11 @@
 	if($is_allowed != 1){
 	  echo "Authentication of user failed.";die();
 	}
-  // var_dump($_POST);die();
+ // var_dump($_POST);die();
   //echo "<pre>", var_dump(json_decode($_POST['data'],true)), "</pre>";die();
    $data = json_decode($_POST['data'],true);
 
- //echo "<pre>", var_dump($data), "</pre>";die();
+// echo "<pre>", var_dump($data), "</pre>";die();
 ?>
 <html >
 
@@ -60,7 +60,6 @@
 
 		<tr>
 			<th>Branches</th>
-			<th>Admin Name</th>
 			<th>Contact no.</th>
 			<th>Address</th>
 			<th>No. of Orders</th>
@@ -73,22 +72,22 @@
 	   <h5 id= 'total_branch'>Total Branches: <?php echo $data['count_branches']; ?></h5>
 	   <h5 id= 'total_orders'>Total Orders: <?php echo $data['count_orders']; ?></h5>
 <?php 	foreach($data['lists'] as $info){ 
-       $arr_add = array($info['unit_no'],$info['building_name'],$info['street'],$info['town_city'],$info['state_province'],$info['country']);
+       $arr_add = array($info['branch_address'],$info['branch_town_city'],$info['branch_state_province'],$info['country']);
 	   $address =  implode(' ',$arr_add);
 ?>
   
 			<tr id = "<?php echo $info['branch_id'];?>">
 				<td>
 				 <?php 
-				   echo ucwords($info['branch_desc']);
+				   echo ucwords($info['branch_name']);
 				  // $name = $var_func->join_string(array($info['fname'],$info['mname'],$info['lname']));
 				   //echo $name;
 				 
 				 ?>
 				</td>
-				<td>
+		<!--		<td>
 				 <?php echo ucfirst($info['branch_contact_person'])?>
-				</td>
+				</td>-->
 				<td>
 				 <?php echo $info['branch_contact_no'];?>
 				</td>

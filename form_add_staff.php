@@ -72,7 +72,7 @@ $(function() {
 					<tr>
 						<td colspan="2" style="text-align:left;"><h3>Address</h3></td>
 					</tr>
-					<tr>
+<!--					<tr>
 						<td class="padding_left">Unit No.</td>
 						<td class="padding_right"><input class="form-control" type="text" name="unit_no" id="unit_no"/></td>
 					</tr>
@@ -80,6 +80,7 @@ $(function() {
 						<td class="padding_left">Building No./ Name</td>
 						<td class="padding_right"><input class="form-control" type="text" name="building_name" id="building_name"/></td>
 					</tr>
+					-->
 					<tr>
 						<td class="padding_left">Street *</td>
 						<td class="padding_right"><input class="form-control" type="text" name="street" id="street"/></td>
@@ -97,10 +98,10 @@ $(function() {
 						<td class="padding_right">
 							<select class="res_select form-control"  id = "country" name="country">
 								<option value=""></option>
-								<option value="Philippines">Philippines</option>
+						<!--		<option value="Philippines">Philippines</option>
 								<option value="Australia">Australia</option>
 								<option value="Singapore">Singapore</option>
-								<option value="Japan">Japan</option>
+								<option value="Japan">Japan</option>-->
 							</select>
 						</td>
 					</tr>
