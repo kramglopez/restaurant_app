@@ -469,7 +469,8 @@
 			$("table#"+table_id).advancedtable({searchField: "#search", loadElement: "#loader", searchCaseSensitive: false, ascImage: "css/images/up.png", descImage: "css/images/down.png", searchOnField: "#searchOn"});
 		}
 	
-		
+	
+		/********** CLASS **********/
 		$('a#class').unbind().on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
@@ -481,6 +482,9 @@
 				url:'controller.php',
 						data: {'function_name':'get_class'},
 				success: function (resp){ 
+				
+					var obj = jQuery.parseJSON(resp);
+				
 					$.ajax({
 						type: 'POST',
 						url:'class.php',
@@ -488,9 +492,15 @@
 						success: function (response){
 							console.log(resp);
 
-							// $.each()
-
-
+							
+							$.each(obj,function(index,value){
+								var class_status = value['class_status'];
+								// var br_desc = value['branch_name'];
+							
+								console.log(class_status);
+							
+								// $("select#branch_id").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
+							});
 							/*
    							var status = 1;
 
@@ -516,7 +526,6 @@
 		});
 		
 		
-		/********** ADD NEW CLASS **********/
 		$('a#add_class').on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault();
@@ -595,7 +604,7 @@
 								}
 							});
 
-						} // ***** else ***** //
+						} // else //
 													
 					},
 					Cancel: function() {
@@ -608,13 +617,13 @@
 				
 			});
 		};
-		/********** END: ADD NEW CLASS **********/
+		/********** END: CLASS **********/
 		
-		/********** function whether to show or not to show home page **********/
+		// function whether to show or not to show home page //
 		function do_show_home(element){
 		  if($('div#content_bottom').text().trim().length == 0){
 			$(element).click();
-			//console.log($(element));
+			// console.log($(element));
 			
 		  }
         }		

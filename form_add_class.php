@@ -40,7 +40,7 @@
 
 	<form id='add_class_form' style='width: 80%; margin: 0 auto;' class="form-horizontal">
 		<div class="form-group">
-			<label for="lbl_class" class="col-sm-3 control-label">Class</label>
+			<label for="lbl_class" class="col-sm-3 control-label">Class *</label>
 			<div class="col-sm-8">
 			<input type="text" class="form-control" id="input_class"  name="input_class"  >
 			</div>
