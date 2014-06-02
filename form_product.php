@@ -60,12 +60,14 @@
 				  <input type="text" class="form-control" id="inp_new_menu_price" name="inp_new_menu_price" >
 				</div>
 			  </div>
+			  
 			  <div class="form-group">
 				<label for="inp_discount" class="col-sm-3 control-label">Discount</label>
 				<div class="col-sm-8">
 				  <input type="text" class="form-control" id="inp_discount" name="inp_discount" >
 				</div>
 			  </div>
+			  
 			  <div class="form-group">
 				<label for="inp_menu_qty" class="col-sm-3 control-label">Quantity</label>
 				<div class="col-sm-8">
@@ -90,8 +92,8 @@
 			   <label for="lbl_latest_product" class="col-sm-3 control-label">Latest Product</label>
 			   <div class="col-sm-8">
 					<div id="radioset_latest_product">
-					 <input type="radio" id="rad_latest_product_1" name="rad_latest_product" value="enable" checked ><label for="rad_latest_product_1">Enable</label>
-					 <input type="radio" id="rad_latest_product_2" name="rad_latest_product" value="disable" ><label for="rad_latest_product_2">Disable</label>
+					 <input type="radio" id="rad_latest_product_1" name="rad_latest_product" value="1" checked ><label for="rad_latest_product_1">Enable</label>
+					 <input type="radio" id="rad_latest_product_2" name="rad_latest_product" value="0" ><label for="rad_latest_product_2">Disable</label>
 					</div>
 			   </div>
 			  </div>
@@ -99,8 +101,8 @@
 			   <label for="lbl_best_seller" class="col-sm-3 control-label">Best Seller</label>
 			   <div class="col-sm-8">
 					<div id="radioset_best_seller">
-					 <input type="radio" id="rad_best_seller_1" name="rad_best_seller" value="enable" ><label for="rad_best_seller_1">Enable</label>
-					 <input type="radio" id="rad_best_seller_2" name="rad_best_seller" value="disable" checked><label for="rad_best_seller_2">Disable</label>
+					 <input type="radio" id="rad_best_seller_1" name="rad_best_seller" value="1" ><label for="rad_best_seller_1">Enable</label>
+					 <input type="radio" id="rad_best_seller_2" name="rad_best_seller" value="0" checked><label for="rad_best_seller_2">Disable</label>
 					</div>
 			   </div>
 			  </div>
@@ -108,8 +110,8 @@
 			   <label for="lbl_promo" class="col-sm-3 control-label">Promo</label>
 			   <div class="col-sm-8">
 					<div id="radioset_promo">
-					 <input type="radio" id="rad_promo_1" name="rad_promo" value="enable" ><label for="rad_promo_1">Enable</label>
-					 <input type="radio" id="rad_promo_2" name="rad_promo" value="disable" checked><label for="rad_promo_2">Disable</label>
+					 <input type="radio" id="rad_promo_1" name="rad_promo" value="1" ><label for="rad_promo_1">Enable</label>
+					 <input type="radio" id="rad_promo_2" name="rad_promo" value="0" checked><label for="rad_promo_2">Disable</label>
 					</div>
 			   </div>
 			  </div>
@@ -118,8 +120,8 @@
 			   <label for="lbl_status" class="col-sm-3 control-label">Status</label>
 			   <div class="col-sm-8">
 					<div id="radioset_status">
-					 <input type="radio" id="rad_status_1" name="rad_status" value="enable" ><label for="rad_status_1">Enable</label>
-					 <input type="radio" id="rad_status_2" name="rad_status" value="disable" checked><label for="rad_status_2">Disable</label>
+					 <input type="radio" id="rad_status_1" name="rad_status" value="1" ><label for="rad_status_1">Enable</label>
+					 <input type="radio" id="rad_status_2" name="rad_status" value="0" checked><label for="rad_status_2">Disable</label>
 					</div>
 			   </div>
 			  </div>

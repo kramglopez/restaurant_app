@@ -117,10 +117,12 @@ class table {
    $updates = implode(", ", $update);
 
    $statement = "UPDATE {$this->table} SET $updates WHERE $where" ;
-
+	
   }else{
    $statement = "UPDATE {$this->table} SET $updates" ;
   }
+  echo $statement;
+  die();
 //var_dump($statement);die();
   if ($conn->exec($statement)) {
    return true;

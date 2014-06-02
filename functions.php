@@ -5,9 +5,11 @@
 		public function get_distinct_category(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT DISTINCT tcm.menu FROM tbl_cat_menu tcm 
+			
+			$query = $conn->query("SELECT DISTINCT tcm.menu, tcm.menu_id FROM tbl_cat_menu tcm 
 								   JOIN tbl_food tf ON tcm.menu_id=tf.menu_id
 								   WHERE tf.branch_id = $branch_id" );			
+			
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$json_data = json_encode($results);
   		    echo $json_data;
@@ -16,7 +18,7 @@
 		public function get_distinct_class(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT DISTINCT  `class_desc` ,  `class_id` FROM tbl_cat_class" );			
+			$query = $conn->query("SELECT DISTINCT  `class_desc`, `class_id` FROM tbl_cat_class WHERE class_status = 1" );			
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$json_data = json_encode($results);
   		    echo $json_data;
@@ -34,10 +36,12 @@
 			extract($_POST);
 			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_title 
 								   LIKE '%$search_val%' OR food_desc LIKE '%$search_val%' 
-														AND branch_id = $branch_id AND food_status != 3" );
+														AND branch_id = $branch_id AND food_status != 3");
+													
+													
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
-			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
+			$results = $this->image_process($results,'food_img','images/menu/',$default_menu_img); 
 			echo $results;    
 		}
 		
@@ -50,10 +54,10 @@
 		public function get_product(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_id = $menu_id");
+			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_id = $food_id");
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
-			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
+			$results = $this->image_process($results,'food_img','images/menu/',$default_menu_img); 
 			echo $results;  
 		}
 		
@@ -64,27 +68,32 @@
 		*/
 		public function product_edit(){
 			extract($_POST);
+		
 			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
 			if($img != '')
 			{
-				$send['menu_img'] = $menu_code.".jpg";
+				$send['food_img'] = $menu_code.".jpg";
 				$this->save_image_to_folder($img);
 			}
-			$send['branch_id'] = $branch_id;
-			$send['food_code'] = $menu_code;
+			
 			$send['food_title'] = strtolower($data[0]['value']);
 			$send['food_desc'] = $data[1]['value'];
-			$send['food_newprice'] = $data[2]['value'];
-			$send['food_status'] = $data[6]['value'];
-			$send['menu_id'] = strtolower($data[5]['value']);
-		//	$send['uom'] = $data[4]['value'];    
-			$send['food_quantity'] = $data[3]['value'];
-
-			$cond['food_id'] = $menu_id;
+			$send['food_oldprice'] = $data[2]['value'];
+			$send['food_newprice'] = $data[3]['value'];
+			$send['food_quantity'] = $data[5]['value'];
+			$send['menu_id'] = $data[6]['value'];
+			$send['class_id'] = $data[7]['value'];
+			$send['food_latest'] = $data[8]['value'];
+			$send['food_best_seller'] = $data[9]['value'];
+			$send['food_promo'] = $data[10]['value'];
+			$send['food_status'] = $data[13]['value'];
+			
+			$cond['food_id'] = $food_id;
 			$result = $this->update($send,$cond);
+			echo $result;
 		}
 		/*
 		  Author : Mahalia Rose
@@ -96,7 +105,7 @@
 			extract($_POST);
 			$this->table = 'tbl_food';
 			$send['food_status'] = '3';
-			$cond['food_id'] = $menu_id;
+			$cond['food_id'] = $food_id;
 			$result = $this->update($send,$cond);
 		}
 		/*
@@ -122,7 +131,6 @@
 			$send['menu_category'] = strtolower($data[5]['value']);
 			$send['food_quantity'] = $data[3]['value'];
 			
-			print_r($send);
 			
 			// $id = $this->insert($send); 
 			// if($id > 0)
@@ -168,6 +176,7 @@
 				   default_img: default image to use if doesn't have image stored}
 
 		*/
+		
 		  private function image_process($arr,$img_key,$dir,$default_img){
 			 foreach($arr as &$detail){
 				$logo =  base64_encode(file_get_contents($dir.$detail[$img_key]));
@@ -175,6 +184,7 @@
 			 }
 		   return json_encode($arr);
 		  }
+		  
 		 /*
 		  Author : Justin Xyrel 
 		  Date: 04/23/14
