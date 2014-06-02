@@ -20,7 +20,44 @@
 
 		$("table#class").advancedtable({searchField: "#search", loadElement: "#loader", searchCaseSensitive: false, ascImage: "css/images/up.png", descImage: "css/images/down.png", searchOnField: "#searchOn"});
 	});
+
+	$(function() {
+	
+		$( ".rad_class_status" ).buttonset();
+		
+	});
 	</script>
+
+	<style>
+	.rad_class_status span {
+		font-weight: bold !important;
+		font-family: Calibri;
+		font-size: initial;
+	}
+
+	.rad_class_status .ui-state-active {
+		-moz-box-shadow: 0px 1px 0px 0px #f0f7fa;
+		-webkit-box-shadow: 0px 1px 0px 0px #f0f7fa;
+		box-shadow: 0px 1px 0px 0px #f0f7fa;
+		background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #33bdef), color-stop(1, #019ad2));
+		background:-moz-linear-gradient(top, #33bdef 5%, #019ad2 100%);
+		background:-webkit-linear-gradient(top, #33bdef 5%, #019ad2 100%);
+		background:-o-linear-gradient(top, #33bdef 5%, #019ad2 100%);
+		background:-ms-linear-gradient(top, #33bdef 5%, #019ad2 100%);
+		background:linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#33bdef', endColorstr='#019ad2',GradientType=0);
+		background-color:#33bdef;
+		border:1px solid #057fd0;
+		display:inline-block;
+		cursor:pointer;
+		color:#ffffff;
+		font-family:arial;
+		font-size:15px;
+		font-weight:bold;
+		text-decoration:none;
+		text-shadow:0px -1px 0px #5b6178;
+	}
+	</style>
 
 </head>
 
@@ -47,9 +84,9 @@
 			<tr>
 				<th>Id</th>
 				<th>Class</th>
-				<th>Enable</th>
-				<th>Disable</th>
-				<th>Delete</th>
+				<th style="text-align: center;">Status</th>
+				<!--<th>Disable</th>-->
+				<th style="text-align: center;">Delete</th>
 			</tr>
 		</thead>
 
@@ -63,15 +100,17 @@
 					<?php echo $info['class_id']; ?>
 				</td>
 				<td>
-					<?php echo $info['class_desc']; ?>
+					<?php echo ucfirst($info['class_desc']); ?>
 				</td>
-				<td>
-					<input type="radio" name="<?php echo $info['class_id']; ?>" />
+				<td style="text-align: center;">
+					
+					<div id="<?php echo $info['class_id']; ?>" class="rad_class_status">
+						<input type="radio" id="<?php echo $info['class_id']; ?>" name="<?php echo $info['class_id']; ?>" value="1"><label for="<?php echo $info['class_id']; ?>">Enable</label>
+						<input type="radio" id="<?php echo ucfirst($info['class_desc']); ?>" name="<?php echo $info['class_id']; ?>" value="0"><label for="<?php echo ucfirst($info['class_desc']); ?>">Disable</label>
+					</div>
+						
 				</td>
-				<td>
-					<input type="radio" name="<?php echo $info['class_id']; ?>" />
-				</td>
-				<td>
+				<td style="text-align: center;">
 					<input type="checkbox" name="delete" />
 				</td>
 			</tr>

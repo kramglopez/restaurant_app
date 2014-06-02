@@ -474,15 +474,33 @@
 				type: 'POST',
 				url:'controller.php',
 						data: {'function_name':'get_class'},
-				success: function (response){ 
+				success: function (resp){ 
 					$.ajax({
 						type: 'POST',
 						url:'class.php',
-						data: {'data':response},
-						success: function (response){ 
+						data: {'data':resp},
+						success: function (response){
+							console.log(resp);
+
+							// $.each()
+
+
+							/*
+   							var status = 1;
+
+   							if(status == 1){
+								$('div.rad_class_status').find('span:contains(Enable)').click();
+   							}else{
+
+   							 	$('div.rad_class_status').find('span:contains(Disable)').click();
+
+   							}
+							*/
+
 							$('div#content_bottom').html("");
 							$('div#content_bottom').append(response);
-							
+							 
+
 							$.isLoading("hide");
 							
 						}
@@ -521,11 +539,15 @@
 				buttons: {
 					Save: function() {
 
-						if($("input#tb_class").val() == ""){
-							$("input#tb_class").css({'background-color' : '#f2dede'});
+						var class_desc = $("input#input_class")
+						var submit_data = [class_desc];
+						
+						if ($("input#input_class").val() == "") {
+							$("input#input_class").css({'background-color' : '#f2dede'});
 							$("div#error_msg").show();
 						}
 						else {
+
 							$.ajax({
 								url: 'controller.php',
 								data: { 
@@ -534,19 +556,46 @@
 									  },
 								type: "POST",
 								success: function(response){
+									// alert(response);
+									
+									var class_id = response;
+									
+									var ch = $('table#class').find('tr').length-2; 
+									var clas = $("table#class tr:nth-child("+ch+")").attr('class');
+									// var status = ($('input[name=status]').val().trim() == 'activate') ? 'Active' : 'Inactive';
+									var odd_even = (clas == 'odd') ? 'even' : 'odd';
+									// var btn_status = (status == 'Active') ? 'Deactivate' : 'Activate';
+									var user_type = ($('#ut_id').val() == '4') ? 'Restaurant Staff' : 'Restaurant Manager';
+									var add_tbl_row = "<tr class= "+ odd_even +" style='display: table-row'>";
+										add_tbl_row += "<td>"+class_id+"</td>";
+										add_tbl_row += "<td>"+class_desc.val()+"</td>";
+										add_tbl_row += "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1'><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0'><label for="+class_desc.val()+">Disable</label></div></td>";
+										add_tbl_row += "<td style='text-align:center;'><input type='checkbox' name='delete' /></td>";
+										// add_tbl_row += "<td>"+branch.text().trim()+"</td>";
+										// add_tbl_row += "<td>"+user_type+"</td>";
+										// add_tbl_row += "<td>"+status+"</td>";
+										//add_tbl_row += "<td><button id='update_stat'>"+btn_status+"</button></td>";
+										add_tbl_row += "</tr>";
+									$('table#class').append(add_tbl_row);
+
+
 									// console.log(response);
 									// alert(response);
 									$( "#dialog_add_class" ).dialog('close');
 
 									build_dialog('dialog_new_class_confirm');
 									$('#dialog_new_class_confirm').dialog('open'); 
-
+									
 								}
 							});
-						}
-							
+
+						} // ***** else ***** //
+													
 					},
 					Cancel: function() {
+						$("input#input_class").css({'background-color' : ''});
+						$("input#input_class").val("")
+						$("div#error_msg").hide();
 						$( this ).dialog( "close" );
 					}
 				}

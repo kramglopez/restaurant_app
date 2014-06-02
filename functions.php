@@ -324,7 +324,7 @@
 			$res_id = $_SESSION['auth'][0]['res_id'];
 
 			$sql_que = 	"
-						SELECT class_id, class_desc, insert_date, update_date, au_user_id
+						SELECT class_id, class_desc, class_status, insert_date, update_date, au_user_id
 						FROM tbl_cat_class
 						";	   
 			
@@ -337,19 +337,25 @@
 		public function add_class(){
 			global $conn;
 			extract($_POST);
+			// print_r($_POST);
+			
 			$class = $_POST['form'][0]['value'];
-			// $status = $_POST['form'][1]['value'];
-			$this->table = 'tbl_restaurant_class';
-			$class_data['res_class_desc'] = $class;
+			$status = $_POST['form'][1]['value'];
+
+			$this->table = 'tbl_cat_class';
+
+				$class_data['class_desc'] = $class;
+				$class_data['class_status'] = $status;
+
 			$id = $this->insert($class_data);
-			/*
+			
 			if($id > 0)
 			{
 				echo $id;
 			}else{
 				echo 0;
 			}		
-			*/
+			
 		}
 		/********** END: CLASS **********/
 		

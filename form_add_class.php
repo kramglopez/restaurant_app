@@ -42,15 +42,15 @@
 		<div class="form-group">
 			<label for="lbl_class" class="col-sm-3 control-label">Class</label>
 			<div class="col-sm-8">
-			<input type="text" class="form-control" id="tb_class"  name="tb_class"  >
+			<input type="text" class="form-control" id="input_class"  name="input_class"  >
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="lbl_status" class="col-sm-3 control-label">Status</label>
 			<div class="col-sm-8">
-				<div id="radioset_status">
-					<input type="radio" id="radio1_status" name="rad_status" value="enable" checked><label for="radio1_status">Enable</label>
-					<input type="radio" id="radio3_status" name="rad_status" value="disable"><label for="radio3_status">Disable</label>
+				<div id="radioset_status" class="rad_class_status" style="width: 100%;">
+					<input type="radio" id="radio1_status" name="rad_status" value="1" checked><label for="radio1_status">Enable</label>
+					<input type="radio" id="radio3_status" name="rad_status" value="0"><label for="radio3_status">Disable</label>
 				</div>
 			</div>
 		</div>
