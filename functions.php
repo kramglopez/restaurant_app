@@ -78,7 +78,7 @@
 				$send['food_img'] = $menu_code.".jpg";
 				$this->save_image_to_folder($img);
 			}
-			
+
 			$send['food_title'] = strtolower($data[0]['value']);
 			$send['food_desc'] = $data[1]['value'];
 			$send['food_oldprice'] = $data[2]['value'];
@@ -92,6 +92,7 @@
 			$send['food_status'] = $data[13]['value'];
 			
 			$cond['food_id'] = $food_id;
+
 			$result = $this->update($send,$cond);
 			echo $result;
 		}
@@ -103,9 +104,11 @@
 		*/
 		public function product_delete	(){
 			extract($_POST);
+
 			$this->table = 'tbl_food';
 			$send['food_status'] = '3';
 			$cond['food_id'] = $food_id;
+
 			$result = $this->update($send,$cond);
 		}
 		/*
@@ -115,21 +118,20 @@
 		 */
 		public function product_add(){
 			global $conn;
-			extract($_POST);
-			
+			extract($_POST);		
 			$this->table = 'tbl_food';
+
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
 			$send['branch_id'] = $branch_id;
-			$send['food_code'] = $menu_code;
-			$send['food_img'] = $menu_code.".png";
-			$send['food_title'] = strtolower($data[0]['value']);
-			$send['food_desc'] = $data[1]['value'];
+			$send['menu_code'] = $menu_code;
+			$send['menu_img'] = $menu_code.".png";
+			$send['menu_name'] = strtolower($data[0]['value']);
+			$send['menu_desc'] = $data[1]['value'];
 			$send['menu_price'] = $data[2]['value'];
 			$send['menu_status'] = $data[6]['value'];
 			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['food_quantity'] = $data[3]['value'];
 			
 			
 			// $id = $this->insert($send); 
@@ -267,6 +269,52 @@
 		   $_SESSION['auth'] = $user_info;
 
 		}
+		/*
+		  Author : Justin Xyrel 
+		  Date: 04/24/14
+		  Function: update_profile
+		  Desc: updates the current information of the user including the password of the account
+          Params: post data which is the data to be updated
+		*/ 	
+		public function update_profile(){
+			extract($_POST['params']);
+			$this->table = 'tbl_users';
+			$wh = array('user_id' => $user_id);
+         
+			if(!isset($_SESSION)){
+				session_start();
+			} 
+
+		     $this->validate_email_address($form[13]['value'],$user_id);
+
+			foreach($form as &$data){     
+				if($data['name'] !== 'email_add_verify' && $data['name'] !== 'current_password' ){
+					if($data['name'] == 'password' && !empty($data['value']) ){
+					
+						$data['value'] = sha1($data['value']);
+					}
+					if($data['name'] == 'birth_date'){
+						$data['value'] = strtotime($data['value']);
+					}
+					$arr[$data['name']] = $data['value'];
+				}
+			}
+
+			  unset($arr['radio']); // does not belong to DB fields
+			if(empty($arr['password'])){
+			  unset($arr['password']);
+			}
+			$results =  $this->update($arr,$wh);
+
+			if($results){
+			 foreach($arr as $key=>&$value){
+			   $_SESSION['auth'][0][$key] = $value;
+			 }
+			}
+
+			echo $results;
+			
+		}
 		
 		/*
 		  Author : Justin Xyrel 
@@ -283,65 +331,6 @@
 			session_destroy();
 		}
 		
-		/*
-		  Author : Justin Xyrel 
-		  Date: 04/24/14
-		  Function: update_profile
-		  Desc: updates the current information of the user including the password of the account
-          Params: post data which is the data to be updated
-		*/ 	
-		public function update_profile(){
-			extract($_POST['params']);
-         
-			if(!isset($_SESSION)){
-				session_start();
-			} 
-             
-		     //$this->validate_email_address($form[13]['value'],$user_id);
-            
-			foreach($form as &$data){     
-				if($data['name'] !== 'email_add_verify' && $data['name'] !== 'current_password' ){
-					if($data['name'] == 'password' && !empty($data['value']) ){
-					
-						$data['value'] = sha1($data['value']);
-					}
-					if($data['name'] == 'birth_date'){
-						$data['value'] = strtotime($data['value']);
-					}
-					if($data['name'] == 'gender'){
-					    $data['name'] = 'gender_id';
-						$data['value'] = $this->get_gender_id($data['value']);
-					}
-				/*	if($data['name'] == 'country'){
-					    $data['name'] = 'country_id';
-						$data['value'] = $this->get_country_id($data['value']);
-					}*/
-				    if($data['name'] != 'email_add'){
-				     $arr[$data['name']] = $data['value'];
-					}
-				}
-			}
-		    unset($arr['radio']); // does not belong to DB fields
-			
-			if(empty($arr['password'])){
-			  unset($arr['password']);
-			}
-			/*update record in DB*/
-			$this->table = 'tbl_users';
-			$wh = array('user_id' => $user_id);
-			$results =  $this->update($arr,$wh);
-			
-			if($results){
-			 foreach($arr as $key=>&$value){
-			   $_SESSION['auth'][0][$key] = $value;
-			 }
-			}
-
-			echo $results;
-			
-		}
-		
-
 		 /*
 		  Author : Justin Xyrel 
 		  Date: 05/01/14
@@ -359,10 +348,13 @@
 		     $fields = array('fname','lname','middle');
 			  $res_id = $_SESSION['auth'][0]['res_id'];
 
-			$sql_que = "SELECT u.*,ut.user_type,rb.branch_name FROM tbl_users u
+			$sql_que = "SELECT u.*,ut.user_type,rb.branch_name,
+			            (SELECT country FROM tbl_cat_country WHERE country_id = rb.country_id) as country 	
+						FROM tbl_users u
 						JOIN tbl_cat_user_type ut ON u.user_type_id =ut.user_type_id 
 						JOIN tbl_branch rb ON u.branch_id = rb.branch_id WHERE 
-						rb.restaurant_id= 9 AND u.user_type_id = 4 ";
+						rb.restaurant_id= $res_id AND u.user_type_id = 4 ";
+
 		 //   var_dump($sql_que);die();
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -385,50 +377,36 @@
 				session_start();
 			}		
 			
-			/*$fields = array('fname','lname','middle');
-			$res_id = $_SESSION['auth'][0]['res_id'];*/
-            $this->table = 'tbl_cat_class';
-		    $json_data= json_encode($this->select_all());
-			/*$sql_que = 	"
+			$fields = array('fname','lname','middle');
+			$res_id = $_SESSION['auth'][0]['res_id'];
+
+			$sql_que = 	"
 						SELECT class_id, class_desc, insert_date, update_date, au_user_id
 						FROM tbl_cat_class
 						";	   
 			
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
-            $json_data = json_encode($results);*/
+            $json_data = json_encode($results);
   		    echo $json_data;
 		}
 		
 		public function add_class(){
 			global $conn;
 			extract($_POST);
-			$this->table = 'tbl_food';
-			$data = $_POST['post'];
-			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
-			
-			$send['branch_id'] = $branch_id;
-			$send['food_code'] = $menu_code;
-			$send['food_img'] = $menu_code.".png";
-			$send['food_title'] = strtolower($data[0]['value']);
-			$send['food_desc'] = $data[1]['value'];
-			$send['food_newprice'] = $data[2]['value'];
-			$send['food_status'] = $data[6]['value'];
-			$send['menu_id'] = strtolower($data[5]['value']);
-			//$send['uom'] = $data[4]['value'];    
-			$send['food_quantity'] = $data[3]['value'];
-			
-			$id = $this->insert($send); 
+			$class = $_POST['form'][0]['value'];
+			// $status = $_POST['form'][1]['value'];
+			$this->table = 'tbl_restaurant_class';
+			$class_data['res_class_desc'] = $class;
+			$id = $this->insert($class_data);
+			/*
 			if($id > 0)
 			{
-			   $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
-			   $img_required['folder'] = 'images/menu';
-			   $img_required['title'] = $menu_code;
-			   $image = json_encode($img_required, true);
-			   echo $this->save_image_to_folder($image);
+				echo $id;
 			}else{
-			  echo 0;
-			}			
+				echo 0;
+			}		
+			*/
 		}
 		/********** END: CLASS **********/
 		
@@ -446,26 +424,35 @@
 			if(!isset($_SESSION)){
 				session_start();
 			}		
-			$this->table = 'tbl_users';
-			$this->validate_email_address($form[13]['value']);
+			
+			// var_dump( $form);die();
+			$this->validate_email_address($form[11]['value']);
 			$user_type_id = $_SESSION['auth'][0]['user_type_id'];
-			//  var_dump( $user_type_id);die();
+			 
 			//  var_dump( $_SESSION['auth'][0]);
 			//	exit();
-			foreach ($form as $val) {
+			foreach ($form as &$val) {
 				$val['value'] = ($val['name'] == 'password') ? sha1($val['value']) : $val['value'];
 				$val['value'] = ($val['name'] == 'status') ? (($val['value'] == 'activate') ? '1' : '0') : $val['value'];
-				$fields[$val['name']] = $val['value'];
 				
-				if($val['name'] == 'email_add'){
-					$fields['username'] = $val['value'];
+				
+				if($val['name'] == 'gender'){
+				  $val['name'] = 'gender_id';
+				  $val['value'] = $this->get_gender_id((strtolower($val['value']) == 'female') ? 'F'  : 'M');
+				  //var_dump($val['value']);die();
 				}
+				
+				
+				$val['name'] = ($val['name'] == 'country') ? 'country_id' : $val['name'];
+				$val['name'] = ($val['name'] == 'street') ? 'address' : $val['name'];
+				$val['name'] = ($val['name'] == 'email_add') ? 'username' : $val['name'];
+			    $fields[$val['name']] = $val['value'];
 			}
-			
+		//	var_dump( $form);die();
+			$this->table = 'tbl_users';
 			$fields['user_type_id'] = ($user_type_id == '4' ) ? '5' : '4' ;
 			$fields['birth_date'] = strtotime($fields['birth_date']);
 			$response = $this->insert($fields);
-
 			if($response > 0) {
 				echo json_encode(array('error' => '0' ,'result'=>true));
 			}
@@ -519,8 +506,8 @@
 		
 		public function validate_email_address($email_address,$user_id = 0){
 	       $this->table = 'tbl_users';
-		 /*check existence of username*/
-		   $email_exist  = $this->check_existence("username = '".$email_address."' and user_id != '".$user_id."'" );
+		 //  var_dump($user_id);die();
+		   $email_exist  = $this->check_existence("email_add = '".$email_address."' and user_id != '".$user_id."'" );
 		 //  var_dump($email_exist);
 		   $is_valid_email = filter_var($email_address,FILTER_VALIDATE_EMAIL);
 		    if($email_exist){
@@ -583,22 +570,24 @@
 			global $conn;
 			extract($_POST);
 
-			$this->table = 'tbl_restaurant_branches';
-		    $results['count_branches'] = $this->select_count_where('res_id='.$res_id);
+			$this->table = 'tbl_branch';
+		    $results['count_branches'] = $this->select_count_where('restaurant_id='.$res_id);
 			
 			$total_order = 0;
 			
-			$sql_que = "SELECT t_b.branch_id,t_b.branch_desc,t_b.branch_contact_person,t_b.branch_contact_no,t_b.unit_no,
-							   t_b.building_name,t_b.street,t_b.town_city,t_b.state_province,t_b.country,
-								(SELECT count(*) from tbl_orders where branch_id = t_b.branch_id) as total_order
-						FROM tbl_restaurant_branches t_b
-						WHERE t_b.res_id =".$res_id;
-
+			$sql_que = "SELECT t_b.branch_id,t_b.branch_name,t_b.branch_address,t_b.branch_town_city,t_b.branch_state_province,t_b.branch_contact_no,t_b.country_id,
+								(SELECT count(*) from tbl_orders where branch_id = t_b.branch_id) AS total_order
+						FROM tbl_branch t_b
+						WHERE t_b.restaurant_id =".$res_id;
+  //  var_dump($sql_que);die();
 			$query = $conn->query($sql_que);
 
             $results['lists'] = $query->fetchAll(PDO::FETCH_ASSOC);
 
-			foreach($results['lists'] as $list){
+			foreach($results['lists'] as &$list){
+			  $get_country_info = json_decode($this->get_country_name($list['country_id']),true);
+			  //var_dump($get_country_info);die();
+			  $list['country'] = $get_country_info[0]['country'];
 			  $total_order += $list['total_order'];
 			}
 			 $results['count_orders'] = $total_order;
@@ -621,17 +610,19 @@
 		    $results['count_orders'] = $this->select_count_where('branch_id='.$branch_id);
 			$this->table = 'tbl_users';
 		    $results['count_staff'] = $this->select_count_where('user_type_id=5 and branch_id='.$branch_id);
-			$sql_que = "SELECT o.order_id,o.user_id,o.table_id,o.discount_type_id,o.guests_no,o.note,o.order_status,o.order_type,
-						o.del_address,o.event_type,o.expected_date,o.expected_time,
-						o.expected_time_to,o.processed_date,o.discount_percentage,
-						o.total_amount,o.discount_amount,o.total_payment,o.insert_date,u.fname,u.lname,u.mname,u.unit_no,
-						u.building_name,u.street,u.town_city,
-						u.state_province,u.country,u.contact_no,u.email_add,
-						(SELECT currency from tbl_restaurant_branches where branch_id = ".$branch_id.") as currency
+			$sql_que = "SELECT o.order_id,o.user_id,o.table_id,o.discount_id,o.guests_no,o.note,
+						(SELECT order_status from tbl_cat_order_status where order_status_id=o.order_status_id) as order_status,
+						(SELECT order_type from tbl_cat_order_type where order_type_id=o.order_type_id) as  order_type,
+						(SELECT event from tbl_cat_event where event_id=o.event_id) as event,
+						o.del_address,o.event_date,o.event_start,
+						o.event_end,o.processed_date,o.discount_percentage,
+						o.total_amount,o.discount_amount,o.total_payment,o.insert_date,u.fname,u.lname,u.mname,u.address,u.town_city,
+						u.state_province,(SELECT country from tbl_cat_country where country_id=u.country_id) as country,u.contact_no,u.username,
+						(SELECT country_currency from tbl_cat_country where country_id = (SELECT country_id from tbl_branch where branch_id = o.branch_id)) as currency
 						
 						FROM tbl_orders o JOIN tbl_users u on o.user_id = u.user_id 
-						WHERE o.branch_id = ". $branch_id ;
-
+						WHERE o.branch_id = ".$branch_id;
+						
 			$query = $conn->query($sql_que) ;
 			
 			$results['lists'] = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -649,11 +640,10 @@
 			global $conn;
 			extract($_POST);
 
-			$sql_que = "SELECT od.menu_id,od.mix_match_id,od.discount_type_id,
-						od.quantity,od.discount_percentage,od.discount_amount,
-						od.total_payment,od.status,m.menu_id,m.menu_name,mx.mix_match_id,mx.mix_match_name 
-						FROM tbl_order_details od LEFT JOIN tbl_menus m on od.menu_id = m.menu_id 
-						LEFT JOIN tbl_mix_matches mx on od.mix_match_id = mx.mix_match_id where od.order_id = ".$order_id;
+			$sql_que = "SELECT od.food_id,od.order_quantity,
+								m.food_id,m.food_title,m.food_newprice FROM tbl_order_details od 
+								LEFT JOIN tbl_food m on od.food_id = m.food_id 
+				  	    WHERE od.order_id = ".$order_id;
 
 			$query = $conn->query($sql_que) ;
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -679,9 +669,10 @@
 		     $fields = array('fname','lname','middle');
 			 $branch_id = $_SESSION['auth'][0]['branch_id'];
 
-			$sql_que = "SELECT u.*,ut.user_type,rb.branch_desc from tbl_users u join tbl_user_types ut on u.user_type_id =ut.user_type_id 
-						join tbl_restaurant_branches rb on u.branch_id = rb.branch_id where 
-                   rb.branch_id= ".$branch_id." and u.user_type_id = 5 ";
+			$sql_que = "SELECT u.*,ut.user_type,rb.branch_name FROM tbl_users u
+						JOIN tbl_cat_user_type ut ON u.user_type_id =ut.user_type_id 
+						JOIN tbl_branch rb ON u.branch_id = rb.branch_id WHERE 
+						rb.branch_id= ".$branch_id." and u.user_type_id = 5 ";
 
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -721,6 +712,21 @@
 		   return $result;
 		}
 		
+		
+		/**
+		  Author : Justin Xyrel 
+		  Date: 05/30/14
+		  Function: get_country_name
+		  Desc: get country name based on country id -_"
+ 		  Params: country_id
+		**/
+		
+		public function get_country_name($country_id){
+		   $this->table = 'tbl_cat_country';
+		   
+		   $result = json_encode($this->select_fields_where(array('country','country_currency'),array('country_id' => $country_id)));
+		   return $result;
+		}
 
 	}
 	

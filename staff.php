@@ -8,6 +8,7 @@
 	if($is_allowed != 1){
 	  echo "Authentication of user failed.";die();
 	}
+	//var_dump($_POST);die();
     $data = json_decode($_POST['data'],true);
 	
  //echo "<pre>", var_dump($data), "</pre>";
@@ -82,16 +83,16 @@
 				 ?>
 				</td>
 				<td>
-				 <?php echo implode(" ", array($info['unit_no'],$info['building_name'],$info['street'],$info['town_city'],$info['state_province'],$info['country']));?>
+				 <?php echo implode(" ", array($info['address'],$info['town_city'],$info['state_province'],$info['country']));?>
 				</td>
 				<td>
 				 <?php echo $info['contact_no'];?>
 				</td>
 				<td>
-				 <?php echo $info['email_add'];?>
+				 <?php echo $info['username'];?>
 				</td>
 				<td>
-				 <?php echo $info['branch_desc'];?>
+				 <?php echo $info['branch_name'];?>
 				</td>
 				<td>
 				 <?php echo $user_type;//$info['user_type'];?>

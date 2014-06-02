@@ -33,6 +33,7 @@ $(document).ready(function(){
 						'usr': usr.val(),
 						'pwd': response,},
 					success: function(response){
+					//alert(response);
 						if(response != '[]'){
 							$('#err_message').fadeOut();
 							$.ajax({

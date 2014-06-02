@@ -4,7 +4,7 @@
 
         /*STAFF*/
 		
-		$('a#manager').on('click',function(event){
+		$('a#manager').unbind().on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
 			$.ajax({
@@ -60,13 +60,16 @@
 		
 		/*END OF STAFF*/
 		
+
+
+
 		
 		function build_dialog(element_id){
 			$('#'+element_id).dialog({
 				height: 'auto',
 				width: 'auto',
-				position: 'top',
-				zIndex: 999,
+			    position: 'top',
+				// zIndex: 999,
 				autoOpen: false,
 				modal: true,
  				buttons: {
@@ -81,6 +84,7 @@
 		function dialog_add_staff(){
 			var win_width = window.innerWidth/1.3;
 			var win_height = window.innerHeight/1.05;
+			//alert('dadsdsa');
 			$( "#dialog_staff" ).dialog({
 				autoOpen: false,
 				height: win_height,	 
@@ -100,10 +104,12 @@
 								success: function (response){ 
 									$("#dialog_staff").html("");
 									$("#dialog_staff").append(response);
-									
+									 
+									get_country_list('country');
+									 
 									$.each(obj,function(index,value){
 										var br_id = value['branch_id'];
-										var br_desc = value['branch_desc'];
+										var br_desc = value['branch_name'];
 									
 										$("select#branch_id").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
 									});
@@ -155,7 +161,7 @@
 										  },
 									type: "POST",
 									success: function(response){
-								//	  console.log(response);
+									  console.log(response);
 								      var obj = jQuery.parseJSON(response);
 									
 										if(obj['result']){
@@ -179,7 +185,7 @@
 														add_tbl_row += "<td>"+street.val()+" "+ town_city.val()+" "+ state_province.val()+"</td>";
 														add_tbl_row += "<td>"+contact_no.val()+"</td>";
 														add_tbl_row += "<td>"+email_add.val()+"</td>";
-														add_tbl_row += "<td>"+branch.text().trim()+"</td>";
+														add_tbl_row += "<td>"+$('select[name=branch_id] :selected').text().trim()+"</td>";
 														add_tbl_row += "<td>"+user_type+"</td>";
 														add_tbl_row += "<td>"+status+"</td>";
 														add_tbl_row += "<td><button id='update_stat'>"+btn_status+"</button></td>";
@@ -230,6 +236,7 @@
 			
 			if($('input#ut_id').val() == '4'){
 				$('div#manager').show();
+				do_show_home('a#all_trans');
 				$.isLoading("hide");
 			}
 			
@@ -288,7 +295,8 @@
 		$('a#resadmin_report').one('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
-			$.isLoading({text:"Loading.. "});
+		//	$.isLoading("hide");
+		//	$.isLoading({text:"Loading.. "});
 			$.ajax({
 				type: 'POST',
 				url:'controller.php',
@@ -296,28 +304,31 @@
 				success: function (response){
 					var obj = jQuery.parseJSON(response);
 					var user_res_id = obj[0]['res_id'];
-					 
+					// console.log(user_res_id);
 					$.ajax({
 						type: 'POST',
 						url:'controller.php',
 						data: {'function_name':'restadmin_report','res_id' : user_res_id},
 						success: function (response){ 
-					//	console.log(response);
+					//  	console.log(response);
+						
 							$.ajax({
 								type: 'POST',
 								url:'restadmin_report.php',
 								data: {'data':response},
 								success: function (response){ 
-								$("body").isLoading("hide");
+						
 									$('div#content_bottom').html("");
 									$('div#content_bottom').append(response);
-									
+									$.isLoading("hide");
+									//alert('dog');
 								}	
 							});					
 						}
 					});	
                 }				
 			});
+		  //$.isLoading("hide");
 		});
 		
 		$('a#all_trans').one('click',function(event){
@@ -355,15 +366,17 @@
 						success: function (response){ 
 							var obj = jQuery.parseJSON(response);
 							var total_invoice = 0;
-						//console.log(obj);
+						 console.log(obj);
 						   $('table#order_details').find('tbody').children('tr').remove();
 						   
 						   $.each(obj,function(index,value){
-						     var food_val = (!value['menu_name'] )?  value['mix_match_name'] : value['menu_name'];
-							 var price_per = parseFloat(value['total_payment']/value['quantity']).toFixed(2);
-							 var total_payment = parseFloat(value['total_payment']).toFixed(2);
-
-						      $('table#order_details').find('tbody').append("<tr><td>"+food_val+"</td><td>"+price_per+"</td><td>X</td><td>"+value['quantity']+"</td><td>"+total_payment+"</td></tr>");
+						     var food_val =  value['food_title'];
+							// var price_per = parseFloat(value['total_payment']/value['order_quantity']).toFixed(2);
+							// var total_payment = parseFloat(value['total_payment']).toFixed(2);
+							 var price_per = parseFloat(value['food_newprice']).toFixed(2);
+							 var total_payment = parseFloat(value['food_newprice'] * value['order_quantity']).toFixed(2);
+							
+						      $('table#order_details').find('tbody').append("<tr><td>"+food_val+"</td><td>"+price_per+"</td><td>X</td><td>"+value['order_quantity']+"</td><td>"+total_payment+"</td></tr>");
 							  total_invoice += parseInt(total_payment);
 						   });
 						       total_invoice = parseFloat(total_invoice).toFixed(2);
@@ -518,7 +531,31 @@
 				
 				buttons: {
 					Save: function() {
-					
+
+						if($("input#tb_class").val() == ""){
+							$("input#tb_class").css({'background-color' : '#f2dede'});
+							$("div#error_msg").show();
+						}
+						else {
+							$.ajax({
+								url: 'controller.php',
+								data: { 
+										'form' : $("#add_class_form").serializeArray(),
+										'function_name':'add_class',
+									  },
+								type: "POST",
+								success: function(response){
+									// console.log(response);
+									// alert(response);
+									$( "#dialog_add_class" ).dialog('close');
+
+									build_dialog('dialog_new_class_confirm');
+									$('#dialog_new_class_confirm').dialog('open'); 
+
+								}
+							});
+						}
+							
 					},
 					Cancel: function() {
 						$( this ).dialog( "close" );
@@ -533,7 +570,7 @@
 		function do_show_home(element){
 		  if($('div#content_bottom').text().trim().length == 0){
 			$(element).click();
-			console.log($(element));
+			//console.log($(element));
 			
 		  }
         }		
