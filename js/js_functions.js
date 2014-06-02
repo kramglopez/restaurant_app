@@ -5,7 +5,6 @@
 	usage: to check if the fields have value hence will change the css style if the required field is null
 	author: Justin ^_-
 	*/
-
 	function check_required_fields(required_fields){
 	  var count = 0;
 	  $.each(required_fields, function(key,value){
@@ -53,3 +52,29 @@
 		});	
 
 	}
+	
+function is_json_string(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function readImage(input){
+
+	if ( input.files && input.files[0] ) {
+		
+		var FR = new FileReader();
+			FR.onload = function(e) {
+				$('form').find('#img_base_container').text(e.target.result);
+				img_base = $('form').find('div#img_base_container').text();
+				$('#image_view').attr('src',img_base);				
+			};       
+
+			FR.readAsDataURL( input.files[0] );
+		
+	}
+
+}

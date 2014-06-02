@@ -5,74 +5,122 @@
 		public function get_distinct_category(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT DISTINCT tcm.menu FROM tbl_cat_menu tcm 
+			
+			$query = $conn->query("SELECT DISTINCT tcm.menu, tcm.menu_id FROM tbl_cat_menu tcm 
 								   JOIN tbl_food tf ON tcm.menu_id=tf.menu_id
 								   WHERE tf.branch_id = $branch_id" );			
+			
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$json_data = json_encode($results);
   		    echo $json_data;
 		}
 		
+		public function get_distinct_class(){
+			global $conn;
+			extract($_POST);
+			$query = $conn->query("SELECT DISTINCT  `class_desc`, `class_id` FROM tbl_cat_class WHERE class_status = 1" );			
+			$results = $query->fetchAll(PDO::FETCH_ASSOC);
+			$json_data = json_encode($results);
+  		    echo $json_data;
+		}
+		
+		/************PRODUCTS**************/
+		/*
+		  Author : Mahalia Rose
+		  Function: search
+		  Desc: Search product
+		  Params: {Post Data with search value and branch_id of the staff logged in.}
+		*/
 		public function search(){
 			global $conn;
 			extract($_POST);
 			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_title 
 								   LIKE '%$search_val%' OR food_desc LIKE '%$search_val%' 
-														AND branch_id = $branch_id AND food_status != 3" );
+														AND branch_id = $branch_id AND food_status != 3");
+													
+													
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
-			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
+			$results = $this->image_process($results,'food_img','images/menu/',$default_menu_img); 
 			echo $results;    
 		}
 		
+		
+		/*
+		  Author : Mahalia Rose
+		  Function: get_product
+		  Desc: Get Specific Product based on the food_id
+		*/
 		public function get_product(){
 			global $conn;
 			extract($_POST);
-			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_id = $menu_id");
+			$query = $conn->query("SELECT * FROM  tbl_food WHERE food_id = $food_id");
 			$results = $query->fetchAll(PDO::FETCH_ASSOC);
 			$default_menu_img = "images/res_logo/no-logo.jpg";
-			$results = $this->image_process($results,'menu_img','images/menu/',$default_menu_img); 
+			$results = $this->image_process($results,'food_img','images/menu/',$default_menu_img); 
 			echo $results;  
 		}
 		
+		/*
+		  Author : Mahalia Rose
+		  Function: product_edit
+		  Desc: Edit Product
+		*/
 		public function product_edit(){
 			extract($_POST);
+		
 			$this->table = 'tbl_food';
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
 			if($img != '')
 			{
-				$send['menu_img'] = $menu_code.".jpg";
+				$send['food_img'] = $menu_code.".jpg";
 				$this->save_image_to_folder($img);
 			}
-			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
-			$send['menu_price'] = $data[2]['value'];
-			$send['menu_status'] = $data[6]['value'];
-			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
 
-			$cond['menu_id'] = $menu_id;
+			$send['food_title'] = strtolower($data[0]['value']);
+			$send['food_desc'] = $data[1]['value'];
+			$send['food_oldprice'] = $data[2]['value'];
+			$send['food_newprice'] = $data[3]['value'];
+			$send['food_quantity'] = $data[5]['value'];
+			$send['menu_id'] = $data[6]['value'];
+			$send['class_id'] = $data[7]['value'];
+			$send['food_latest'] = $data[8]['value'];
+			$send['food_best_seller'] = $data[9]['value'];
+			$send['food_promo'] = $data[10]['value'];
+			$send['food_status'] = $data[13]['value'];
+			
+			$cond['food_id'] = $food_id;
+
 			$result = $this->update($send,$cond);
+			echo $result;
 		}
-		
-		//menu_status = 3 = deleted product
+		/*
+		  Author : Mahalia Rose
+		  Function: product_delete
+		  Desc: Delete product
+		  Note: menu_status:3  - deleted product
+		*/
 		public function product_delete	(){
 			extract($_POST);
-			$this->table = 'tbl_menus';
-			$send['menu_status'] = '3';
-			$cond['menu_id'] = $menu_id;
+
+			$this->table = 'tbl_food';
+			$send['food_status'] = '3';
+			$cond['food_id'] = $food_id;
+
 			$result = $this->update($send,$cond);
 		}
-		
+		/*
+		  Author : Mahalia Rose
+		  Function: product_add
+		  Desc: Add Product
+		 */
 		public function product_add(){
 			global $conn;
-			extract($_POST);
-			$this->table = 'tbl_menus';
+			extract($_POST);		
+			$this->table = 'tbl_food';
+
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
@@ -84,21 +132,24 @@
 			$send['menu_price'] = $data[2]['value'];
 			$send['menu_status'] = $data[6]['value'];
 			$send['menu_category'] = strtolower($data[5]['value']);
-			$send['uom'] = $data[4]['value'];    
-			$send['quantity'] = $data[3]['value'];
 			
-			$id = $this->insert($send); 
-			if($id > 0)
-			{
-			   $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
-			   $img_required['folder'] = 'images/menu';
-			   $img_required['title'] = $menu_code;
-			   $image = json_encode($img_required, true);
-			   echo $this->save_image_to_folder($image);
-			}else{
-			  echo 0;
-			}			
+			
+			// $id = $this->insert($send); 
+			// if($id > 0)
+			// {
+			   // $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
+			   // $img_required['folder'] = 'images/menu';
+			   // $img_required['title'] = $menu_code;
+			   // $image = json_encode($img_required, true);
+			   // echo $this->save_image_to_folder($image);
+			// }else{
+			  // echo 0;
+			// }			
 		}
+		
+		/************PRODUCTS**************/
+		
+		
 		 /*
 		 Author: Mahalia Rose
 		 Function: save_image_to_folder
@@ -127,6 +178,7 @@
 				   default_img: default image to use if doesn't have image stored}
 
 		*/
+		
 		  private function image_process($arr,$img_key,$dir,$default_img){
 			 foreach($arr as &$detail){
 				$logo =  base64_encode(file_get_contents($dir.$detail[$img_key]));
@@ -134,6 +186,7 @@
 			 }
 		   return json_encode($arr);
 		  }
+		  
 		 /*
 		  Author : Justin Xyrel 
 		  Date: 04/23/14
@@ -540,7 +593,6 @@
 			 $results['count_orders'] = $total_order;
 			 $json_data = json_encode($results);
   		     echo $json_data;
-
 		} 
 		
 		/*
