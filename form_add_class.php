@@ -26,14 +26,6 @@
 		$( "#radioset_status" ).buttonset();
 		
 	});
-	
-	/********** form_add_class.php - get status button value **********/
-	$('input:radio[id=radio1_status]').click(function() {
-		$('input#status_value').val('1')
-	})
-	$('input:radio[id=radio3_status]').click(function(){
-		$('input#status_value').val('0')
-	})
 </script>
 
 	<div id="error_msg" class="alert_msg" style="display: none;">Fill in required fields.</div>	
