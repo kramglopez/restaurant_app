@@ -427,9 +427,9 @@
 			session_start();
 		  }		
 		  $res_id = $_SESSION['auth'][0]['res_id'];
-		  $this->table = 'tbl_restaurant_branches';
-		  $fields = array('branch_id','branch_desc');
-		  $condition = array('res_id'=>$res_id);
+		  $this->table = 'tbl_branch';
+		  $fields = array('branch_id','branch_name');
+		  $condition = array('restaurant_id'=>$res_id);
 		  $result = $this->select_fields_where($fields,$condition);
 		  echo json_encode($result);
 		}
@@ -565,13 +565,13 @@
 			$this->table = 'tbl_users';
 		    $results['count_staff'] = $this->select_count_where('user_type_id=5 and branch_id='.$branch_id);
 			$sql_que = "SELECT o.order_id,o.user_id,o.table_id,o.discount_id,o.guests_no,o.note,
-						(SELECT order_status from tbl_cat_order_status where order_status_id=o.order_status_id),
-						(SELECT order_type from tbl_cat_order_type where order_type_id=o.order_type_id),
-						(SELECT event from tbl_cat_event where event_id=o.event_id),
+						(SELECT order_status from tbl_cat_order_status where order_status_id=o.order_status_id) as order_status,
+						(SELECT order_type from tbl_cat_order_type where order_type_id=o.order_type_id) as  order_type,
+						(SELECT event from tbl_cat_event where event_id=o.event_id) as event,
 						o.del_address,o.event_date,o.event_start,
 						o.event_end,o.processed_date,o.discount_percentage,
 						o.total_amount,o.discount_amount,o.total_payment,o.insert_date,u.fname,u.lname,u.mname,u.address,u.town_city,
-						u.state_province,(SELECT country from tbl_cat_country where country_id=u.country_id),u.contact_no,u.username,
+						u.state_province,(SELECT country from tbl_cat_country where country_id=u.country_id) as country,u.contact_no,u.username,
 						(SELECT country_currency from tbl_cat_country where country_id = (SELECT country_id from tbl_branch where branch_id = o.branch_id)) as currency
 						
 						FROM tbl_orders o JOIN tbl_users u on o.user_id = u.user_id 
@@ -595,7 +595,7 @@
 			extract($_POST);
 
 			$sql_que = "SELECT od.food_id,od.order_quantity,
-								m.food_id,m.food_title FROM tbl_order_details od 
+								m.food_id,m.food_title,m.food_newprice FROM tbl_order_details od 
 								LEFT JOIN tbl_food m on od.food_id = m.food_id 
 				  	    WHERE od.order_id = ".$order_id;
 
