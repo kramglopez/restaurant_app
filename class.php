@@ -56,20 +56,20 @@
 		<tbody>
 
 			<?php
-			foreach($data as $info){
+				foreach($data as $info){
 			?>
-			<tr id = "<?php echo $info['rest_class_id']; ?>">
+			<tr id = "<?php echo $info['class_id']; ?>">
 				<td>
-					<?php echo $info['rest_class_id']; ?>
+					<?php echo $info['class_id']; ?>
 				</td>
 				<td>
-					<?php echo $info['res_class_desc']; ?>
+					<?php echo $info['class_desc']; ?>
 				</td>
 				<td>
-					<input type="radio" name="<?php echo $info['rest_class_id']; ?>" />
+					<input type="radio" name="<?php echo $info['class_id']; ?>" />
 				</td>
 				<td>
-					<input type="radio" name="<?php echo $info['rest_class_id']; ?>" />
+					<input type="radio" name="<?php echo $info['class_id']; ?>" />
 				</td>
 				<td>
 					<input type="checkbox" name="delete" />
@@ -85,6 +85,20 @@
 	</table><!-- /staff -->
 
 	<div id='dialog_add_class'  title="Add New Class"></div>
+	
+
+	<div id='dialog_new_class_confirm' style='display:none;' >
+		<table>
+			<tr>
+				<td>
+					<img src='https://d2g691qpj752hh.cloudfront.net/AcrestaPhilippines/phil1/thumbsUpOrange.png'>
+				</td>
+				<td>
+					Your have successfully added a class.
+				</td>
+			</tr>
+		</table>
+	</div><!-- /confirm_add -->
 	
 </body>
 
