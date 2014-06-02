@@ -400,6 +400,40 @@
 		   get_transaction_bstatus('cancelled');
 		});
 	
+		/*View Restaurant Names*/
+		
+		/*View menus or products*/
+		$('a#add_restaurant').one('click',function(event){
+			event.stopImmediatePropagation(); 
+			event.preventDefault(); 
+					$.ajax({
+						type: 'POST',
+						url:'controller.php',
+						data: {'function_name':'get_restaurant_class'},
+						success: function (response){
+							console.log(response);
+							/*$.ajax({
+								type: 'POST',
+								url:'trans_report.php',
+								data: {'data':response},
+								success: function (response){ 
+									$('div#content_bottom').html("");
+									$('div#content_bottom').append(response);
+									$.isLoading("hide");
+								}
+							});		*/			
+						}
+					});
+											
+			$.ajax({
+				url:'form_add_restaurant_name.php',
+				success: function (response){ 
+						$('div#content_bottom').html("");
+						$('div#content_bottom').append(response);
+				}
+			});										
+		});
+	
 	 	
 		function get_transactions(){
 			$.ajax({

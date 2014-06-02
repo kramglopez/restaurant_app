@@ -676,6 +676,20 @@
 		   return $result;
 		}
 
+		/*
+		  Author : Justin Xyrel 
+		  Date: 06/02/14
+		  Function: get_restaurant_class
+		  Desc: get classes of restaurant
+		  Params:  NONE
+		*/ 
+		
+		public function get_restaurant_class(){
+	       $this->table = 'tbl_cat_class';
+		   $json_data = json_encode($this->select_all());
+		   echo $json_data;
+	   }
+		
 	}
 	
 ?>

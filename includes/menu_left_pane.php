@@ -127,7 +127,7 @@ $(document).ready(function(){
 			<li class='has-sub' style=""><a><span>USER MGMT</span></a>
 				<ul>
 					<li><a href='#' id="restaurants"><span>Restaurants</span></a></li>
-					<li><a href='#'><span>Add Restaurant</span></a></li>
+					<li><a href='#' id="add_restaurant"><span>Add Restaurant</span></a></li>
 					<li><a href='#' id='sysad_report'><span>Report</span></a></li>
 				</ul>
 			</li>
