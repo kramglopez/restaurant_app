@@ -36,7 +36,7 @@ $(function() {
 <div id='main_profile' >
 
 	<div id="add_staff" >		
-			<form id="add_staff_form" class="ac-login" action="?" method="post">
+			<form id="add_restaurant_form" class="ac-login" action="?" method="post">
 
 				<div id="validation_msg" class="msg_container error_msg" style=""><span id="val_msg" style="margin: 0px;"></span></div>
 	 
@@ -53,34 +53,26 @@ $(function() {
 						<td class="padding_right"><input class="form-control" type="text" name="fname" id="fname"/></td>
 					</tr>
 					<tr>
-						<td class="padding_left">Name</td>
-						<td class="padding_right"><input class="form-control" type="text" name="mname" id="mname"/></td>
-					</tr>
-					<tr>
-						<td class="padding_left">Type</td>
+						<td class="padding_left">Type *</td>
 						<td class="padding_right">
-							<select class="res_select form-control"  id = "country" name="country">
+							<select class="res_select form-control"  id = "rest_type" name="rest_type">
 								<option value=""></option>
 
 							</select>
 						</td>
 					</tr>					
 					<tr>
-						<td class="padding_left">Address</td>
+						<td class="padding_left">Address *</td>
 						<td class="padding_right"><input class="form-control" type="text" name="lname" id="lname"/></td>
 					</tr>
 					<tr>
-						<td class="padding_left">Contact No.</td>
+						<td class="padding_left">Contact No. *</td>
 						<td class="padding_right"><input class="form-control" type="text" name="lname" id="lname"/></td>
 					</tr>
 					<tr>
 						<td class="padding_left">Logo</td>
 						<td class="padding_right"><input type="file" class="form-control" id="inp_res_image" name="inp_res_image" /> 
 </td>
-					</tr>
-					<tr>
-						<td class="padding_left">Email</td>
-						<td class="padding_right"><input class="form-control" type="email" name="email" id="email"/></td>	
 					</tr>
 					<tr>
 						<td class="padding_left">Status</td>
@@ -90,6 +82,10 @@ $(function() {
 								<input type="radio" id="radio3" name="status" value="deactivate"><label for="radio3">Deactivate</label>
 							</div>
 						</td>
+					</tr>
+					<tr>
+						<td class="padding_left" colspan ="2" style='text-align:center;'><button id='submit'>Submit</button></td>
+						
 					</tr>
 				
 				</table>

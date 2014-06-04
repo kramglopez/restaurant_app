@@ -686,7 +686,7 @@
 			extract($_POST);
 
 			$sql_que = "SELECT od.food_id,od.order_quantity,
-								m.food_id,m.food_title,m.food_newprice FROM tbl_order_details od 
+								m.food_id,m.food_title,od.order_details_amount FROM tbl_order_details od 
 								LEFT JOIN tbl_food m on od.food_id = m.food_id 
 				  	    WHERE od.order_id = ".$order_id;
 
@@ -782,9 +782,12 @@
 		*/ 
 		
 		public function get_restaurant_class(){
-	       $this->table = 'tbl_cat_class';
-		   $json_data = json_encode($this->select_all());
-		   echo $json_data;
+			global $conn;
+	        $sql_que = "SELECT class_id,class_desc,class_status FROM tbl_cat_class";
+			$query = $conn->query($sql_que);
+            $results = $query->fetchAll(PDO::FETCH_ASSOC);
+		    $json_data = json_encode($results);
+		    echo $json_data;
 	   }
 		
 	}
