@@ -150,7 +150,7 @@ $(function() {
 					
 						<form id="update_form" class="ac-login" action="?" method="post">
 
-							<div id="validation_msg" class="msg_container" style="display:block;background-color:#FF8073;text-align:center;"><h3 id="val_msg"></h3></div>
+							<div id="validation_msg" class="alert_msg" ><span id="val_msg"></span></div>
 				 
 							<table border="0" style="width: 100%;">
 								<tr>

@@ -62,7 +62,7 @@
 			</td>
 			<td width="20%">
 				<div id="loader" style="display:none; float: left;"><img src="css/images/loader.gif" alt="Laoder" /></div>
-				<a class="btn_edit btn btn-default" id="btn_save_updates" style="float: right;"><span class="glyphicon glyphicon-saved"></span>&nbsp;Save Updates</a>
+				<a class="btn_edit btn btn-default" id="btn_save_updates" style="float: right;"><span class="glyphicon glyphicon-saved"></span>&nbsp;Save Updates</a>&nbsp;
 			</td>
 			<td width="20%">
 				<a class="btn_edit btn btn-default" id="btn_delete_selected" style="float: right;" disabled><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete Selected Class</a>

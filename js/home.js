@@ -604,7 +604,7 @@
 						
 						if ($("input#input_class").val() == "") {
 							$("input#input_class").css({'background-color' : '#f2dede'});
-							$("div#error_msg").show();
+							$("div#error_msg").fadeIn();
 						}
 						else {
 
