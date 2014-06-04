@@ -617,37 +617,47 @@
 								type: "POST",
 								success: function(response){
 									// alert(response);
-									var status = $('input[name=rad_status]:checked').val();
-									var class_id = response;
-									var enable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1' checked><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0'><label for="+class_desc.val()+">Disable</label></div></td>";
-									var disable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1'><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0' checked><label for="+class_desc.val()+">Disable</label></div></td>";
-									var ch = $('table#class').find('tr').length-2; 
-									var clas = $("table#class tr:nth-child("+ch+")").attr('class');
-									var odd_even = (clas == 'odd') ? 'even' : 'odd';
-									var user_type = ($('#ut_id').val() == '4') ? 'Restaurant Staff' : 'Restaurant Manager';
-									var add_tbl_row = "<tr class= "+ odd_even +" style='display: table-row'>";
-										add_tbl_row += "<td style='text-transform:capitalize; padding-left:10px;'>"+class_desc.val()+"</td>";
-										
-										if(status == 1){
-											add_tbl_row += enable;
-										}
-										else {
-											add_tbl_row += disable;
-										}
-										
-										add_tbl_row += "<td style='text-align:center;' colspan='2'><input type='checkbox' id="+ class_id +" name='delete' /></td>";
-										add_tbl_row += "</tr>";
-										
-									$('table#class').append(add_tbl_row);
+									// exit();
 									
-									$('input[type="checkbox"]').on('click',function(event){
-										$('a#btn_delete_selected').show();
-									});
+									if(response > 0){
 									
-									$( '.rad_class_status' ).buttonset();
-									$( "#dialog_add_class" ).dialog('close');
-									build_dialog('dialog_new_class_confirm');
-									$('#dialog_new_class_confirm').dialog('open'); 
+										var status = $('input[name=rad_status]:checked').val();
+										var class_id = response;
+										var enable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1' checked><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0'><label for="+class_desc.val()+">Disable</label></div></td>";
+										var disable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1'><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0' checked><label for="+class_desc.val()+">Disable</label></div></td>";
+										var ch = $('table#class').find('tr').length-2; 
+										var clas = $("table#class tr:nth-child("+ch+")").attr('class');
+										var odd_even = (clas == 'odd') ? 'even' : 'odd';
+										var user_type = ($('#ut_id').val() == '4') ? 'Restaurant Staff' : 'Restaurant Manager';
+										var add_tbl_row = "<tr class= "+ odd_even +" style='display: table-row'>";
+											add_tbl_row += "<td style='text-transform:capitalize; padding-left:10px;'>"+class_desc.val()+"</td>";
+											
+											if(status == 1){
+												add_tbl_row += enable;
+											}
+											else {
+												add_tbl_row += disable;
+											}
+											
+											add_tbl_row += "<td style='text-align:center;' colspan='2'><input type='checkbox' id="+ class_id +" name='delete' /></td>";
+											add_tbl_row += "</tr>";
+											
+										$('table#class').append(add_tbl_row);
+										
+										$('input[type="checkbox"]').on('click',function(event){
+											$('a#btn_delete_selected').show();
+										});
+										
+										$( '.rad_class_status' ).buttonset();
+										$( "#dialog_add_class" ).dialog('close');
+										build_dialog('dialog_new_class_confirm');
+										$('#dialog_new_class_confirm').dialog('open');
+									
+									}
+									else{
+										$('div#error_msg').show();
+										$('div#error_msg').text('This class already exists.');
+									}
 									
 								}
 							});

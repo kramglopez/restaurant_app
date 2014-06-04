@@ -159,7 +159,7 @@
 					<img src='https://d2g691qpj752hh.cloudfront.net/AcrestaPhilippines/phil1/thumbsUpOrange.png'>
 				</td>
 				<td>
-					Your have successfully added a class.
+					You have successfully added a class.
 				</td>
 			</tr>
 		</table>

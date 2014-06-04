@@ -412,8 +412,27 @@
 		}
 		
 		public function add_class(){
-			extract($_POST);
+			// extract($_POST['form']);
 			// print_r($_POST);
+			
+			$class = $_POST['form'][0]['value'];
+			$status = $_POST['form'][1]['value'];
+			
+			$this->table = 'tbl_cat_class';
+			$class_exist = $this->check_existence("class_desc = '".$class."' and class_status != 3");
+			if($class_exist){
+				echo 0;
+			}else{
+				$data['class_desc'] = $class;
+				$data['class_status'] = $status;
+				$id = $this->insert($data);
+				echo $id;
+			}
+			
+			/*
+			$this->table = 'tbl_cat_class';
+			$class_exist = $this->check_existence("class_desc = '".$."'");
+			
 			
 			$class = $_POST['form'][0]['value'];
 			$status = $_POST['form'][1]['value'];
@@ -431,6 +450,7 @@
 			}else{
 				echo 0;
 			}
+			*/
 		}
 		
 		public function update_class(){
