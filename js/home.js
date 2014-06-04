@@ -1,5 +1,5 @@
 
-	$(document).unbind().on('ready',function(event) {
+	$(document).on('ready',function(event) {
 	    // event.stopImmediatePropagation();
 
         /*STAFF*/
@@ -508,12 +508,13 @@
 	
 	
 		/********** CLASS **********/
+		// get class //
 		$('a#class').unbind().on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
-			$.isLoading("hide");
-			$.isLoading({text:"Loading.. "});
-
+			// $.isLoading("hide");
+			// $.isLoading({text:"Loading.. "});
+			
 			$.ajax({
 				type: 'POST',
 				url:'controller.php',
@@ -541,10 +542,8 @@
 		});
 		
 		
-		$('a#add_class').on('click',function(event){
-			event.stopImmediatePropagation(); 
-			event.preventDefault();
-			
+		// add class //
+		$(document).on('click', 'a#add_class', function() {
 			dialog_add_class();
 		    $( "#dialog_add_class" ).dialog('open');
 		});	
@@ -597,7 +596,7 @@
 									var odd_even = (clas == 'odd') ? 'even' : 'odd';
 									var user_type = ($('#ut_id').val() == '4') ? 'Restaurant Staff' : 'Restaurant Manager';
 									var add_tbl_row = "<tr class= "+ odd_even +" style='display: table-row'>";
-										add_tbl_row += "<td>"+class_desc.val()+"</td>";
+										add_tbl_row += "<td style='text-transform:capitalize; padding-left:10px;'>"+class_desc.val()+"</td>";
 										
 										if(status == 1){
 											add_tbl_row += enable;
@@ -606,10 +605,14 @@
 											add_tbl_row += disable;
 										}
 										
-										add_tbl_row += "<td style='text-align:center;'><input type='checkbox' name='delete' /></td>";
+										add_tbl_row += "<td style='text-align:center;' colspan='2'><input type='checkbox' id="+ class_id +" name='delete' /></td>";
 										add_tbl_row += "</tr>";
 										
 									$('table#class').append(add_tbl_row);
+									
+									$('input[type="checkbox"]').on('click',function(event){
+										$('a#btn_delete_selected').show();
+									});
 									
 									$( '.rad_class_status' ).buttonset();
 									$( "#dialog_add_class" ).dialog('close');
@@ -631,7 +634,102 @@
 				}
 				
 			});
-		};
+		}
+		
+		
+		// update class status //
+		$('a#btn_save_updates').unbind().on('click',function(){
+			$.isLoading("show");
+			$.ajax({
+				url: 'controller.php',
+				data: { 
+						'form' : $("#class_list").serializeArray(),
+						'function_name':'update_class',
+					  },
+				type: "POST",
+				success: function(response){
+					// alert(response);
+					$.isLoading("hide");
+				}
+			});
+			
+		});
+		
+		
+		// delete class //
+		$(document).on('click', 'table#class thead tr th input#check_all', function() {
+			if(this.checked) {
+				$('table#class tbody tr td input[type="checkbox"]').prop('checked','checked');
+				$('a#btn_delete_selected').removeAttr('disabled');
+			}
+			else {
+				$('table#class tbody tr td input[type="checkbox"]').removeAttr('checked');
+				$('a#btn_delete_selected').attr('disabled','disabled');
+			}
+		});
+		
+		
+		$(document).on('click', 'table#class tbody tr td input[type="checkbox"]', function() { 
+			var checked = $('input[type="checkbox"]:checked').length > 0;
+			var unchecked = $('table#class tbody tr td input[type="checkbox"]').not(':checked');
+			if (checked){
+				$('a#btn_delete_selected').removeAttr('disabled');
+			}
+			else
+			{
+				$('a#btn_delete_selected').attr('disabled','disabled');
+			}
+			if (unchecked){
+				$('table#class thead tr th input#check_all').removeAttr('checked');
+			}
+		});
+		
+		
+		$(document).on('click', 'a#btn_delete_selected', function() {
+			dialog_delete_class();
+			$( "#dialog_delete_class" ).dialog('open');
+		});
+		
+		
+		function dialog_delete_class(){
+			$( "#dialog_delete_class" ).dialog({
+				autoOpen: false,	 
+				width: 400,
+				modal: true,
+				
+				buttons: {
+					Yes: function() {
+						
+						var selected_class = [];
+						
+						$('input[name="delete"]:checked').each(function() {
+							selected_class.push(this.id);
+						});
+						console.log(selected_class);
+						var data = {'data':selected_class,'function_name':'delete_class'};
+						$.ajax({
+							type: 'POST',
+							url:'controller.php',
+							data: data,
+							success: function (response){
+								// console.log(response)
+								$('input[name="delete"]:checked').each(function() {
+									$(this).closest('tr').remove();
+								});
+								
+								$('#dialog_delete_class').dialog('close');
+								build_dialog('deleted_class_confirm');
+								$('#deleted_class_confirm').dialog('open');
+							}
+						});
+						
+					},
+					No: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}
 		/********** END: CLASS **********/
 		
 		// function whether to show or not to show home page //
