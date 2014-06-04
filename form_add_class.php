@@ -9,15 +9,6 @@
 	#radioset label, #radioset_status label {
 		width: 50%;
 	}
-
-	.alert_msg {
-		background-color: #f2dede;
-		border: 1px solid #ebccd1;
-		color: #a94442;
-		padding: 15px;
-		border-radius: 4px;
-		margin-bottom: 20px;
-	}
 </style>
 
 <script>

@@ -12,6 +12,7 @@
 	<script src="js/is_loading.js" type="text/javascript" language="javascript"></script>
 
 	<link href="css/advancedtable.css" rel="stylesheet" type="text/css" />
+	<link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
 
 	<script language="javascript" type="text/javascript">
 	$(document).ready(function() {
