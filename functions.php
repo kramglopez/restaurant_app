@@ -215,7 +215,9 @@
 			global $conn;
 			extract($_POST);
 		        
-			$sql_que = "SELECT u.*,ut.user_type,(SELECT restaurant_id from tbl_branch where branch_id = u.branch_id) as res_id from tbl_users u join tbl_cat_user_type ut on u.user_type_id =ut.user_type_id where 
+			$sql_que = "SELECT u.*,ut.user_type,(SELECT restaurant_id from tbl_branch where branch_id = u.branch_id) AS res_id,
+								(SELECT gender_in FROM tbl_cat_gender WHERE gender_id=u.gender_id ) as gender
+						FROM tbl_users u join tbl_cat_user_type ut on u.user_type_id =ut.user_type_id where 
                    u.username= '".$usr."' and u.password = '".$pwd."' and u.user_type_id != 1";
 			$query = $conn->query($sql_que);
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -753,8 +755,10 @@
 		public function get_country_list(){
 		   $this->table = 'tbl_cat_country';
 		   
-		   $result = json_encode($this->select_all());
-		   return $result;
+		   $result = $this->select_all();
+		   //$json_data = json_encode($result);
+		  // echo $json_data;
+		  echo $result;
 		}
 		
 		
@@ -789,6 +793,19 @@
 		    $json_data = json_encode($results);
 		    echo $json_data;
 	   }
+	   
+	   	/*
+		  Author : Justin Xyrel 
+		  Date: 06/04/14
+		  Function: add_restaurant_name
+		  Desc: add restaurant_name
+		  Params:  
+		*/ 
+		
+		public function add_restaurant_name(){
+			var_dump($_POST);
+	   }
+		
 		
 	}
 	

@@ -9,10 +9,10 @@ $(document).ready(function(){
                     function_name : 'get_country_list', 
                    },
 			success: function (response){  
-				var parse_json = $.parseJSON(response);		
+		     //alert(response);
+				var parse_json = jQuery.parseJSON(response);		
                 if($('select[name=country_id]').children('option').length <= 1){				
 					$.each(parse_json,function(key,value){
-				 
 						$('select[name=country_id]').append('<option value='+value['country_id']+'>'+value['country']+'</option>')
 					});
 				}
@@ -173,7 +173,7 @@ console.log(validation_holder);
 						'town_city' : user_profile['town_city'],
 						'state_province' : user_profile['state_province'],
 						'contact_no' :user_profile['contact_no'],
-						'email_add' : user_profile['email_add'],
+						'email_add' : user_profile['username'],
 						'birth_date' : user_profile['birth_date'],
 						'country' : user_profile['country_id'],
 						'gender' : user_profile['gender'],
