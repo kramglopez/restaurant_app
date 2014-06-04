@@ -371,10 +371,10 @@
 						   
 						   $.each(obj,function(index,value){
 						     var food_val =  value['food_title'];
-							// var price_per = parseFloat(value['total_payment']/value['order_quantity']).toFixed(2);
-							// var total_payment = parseFloat(value['total_payment']).toFixed(2);
-							 var price_per = parseFloat(value['food_newprice']).toFixed(2);
-							 var total_payment = parseFloat(value['food_newprice'] * value['order_quantity']).toFixed(2);
+							 var price_per = parseFloat(value['order_details_amount']/value['order_quantity']).toFixed(2);
+							 var total_payment = parseFloat(value['order_details_amount']).toFixed(2);
+							 //var price_per = parseFloat(value['food_newprice']).toFixed(2);
+							// var total_payment = parseFloat(value['food_newprice'] * value['order_quantity']).toFixed(2);
 							
 						      $('table#order_details').find('tbody').append("<tr><td>"+food_val+"</td><td>"+price_per+"</td><td>X</td><td>"+value['order_quantity']+"</td><td>"+total_payment+"</td></tr>");
 							  total_invoice += parseInt(total_payment);
@@ -401,9 +401,10 @@
 		   get_transaction_bstatus('cancelled');
 		});
 	
-		/*View Restaurant Names*/
+		/**
+		View Restaurant Names
+		**/
 		
-		/*View menus or products*/
 		$('a#add_restaurant').one('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
@@ -412,7 +413,16 @@
 						url:'controller.php',
 						data: {'function_name':'get_restaurant_class'},
 						success: function (response){
-							console.log(response);
+							console.log(response);	
+							var obj = jQuery.parseJSON(response);
+					
+							console.log(obj);
+							$.each(obj,function(index,value){
+								var br_id = value['class_id'];
+								var br_desc = to_title_case(value['class_desc']);
+								//	console.log(value);
+								$("select#rest_type").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
+								});
 							/*$.ajax({
 								type: 'POST',
 								url:'trans_report.php',
@@ -526,10 +536,8 @@
 						data: {'data':response},
 						success: function (response){ 
 							$('div#content_bottom').html("");
-							$('div#content_bottom').append(response);
-							
+							$('div#content_bottom').append(response);							
 							$.isLoading("hide");
-							
 						}
 					});					
 				}

@@ -18,12 +18,26 @@
 	  });
 	  return count;
 	}
+	
+	/*
+	function: show_hide
+	params: (identifier_of_element_to_show,identifier_of_element_to_hide)
+	usage: show and hide elements simultaneously
+	author: Justin ^_-
+	*/
 
 	function show_hide(show,hide){
 	  $(show).slideToggle();
 	  $(hide).slideToggle();
 	}
 
+	/*
+	function: is_json_string
+	params: (str: string to determine if json)
+	usage: determine if json data 
+	author: Justin ^_-
+	*/
+	
 	function is_json_string(str) {
 		try {
 			JSON.parse(str);
@@ -32,6 +46,13 @@
 		}
 		return true;
 	}
+	
+	/*
+	function: get_country_list
+	params: element_name: name of select type where the list of country will enlisted
+	usage: get list of country in the db
+	author: Justin ^_-
+	*/
 
 	function get_country_list(element_name){
 		 $.ajax({
@@ -53,14 +74,6 @@
 
 	}
 	
-function is_json_string(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
 
 function readImage(input){
 
@@ -77,4 +90,16 @@ function readImage(input){
 		
 	}
 
+}
+
+	/*
+	function: to_title_case
+	params: str: string to be converted into upper case
+	usage:  change each word to uppercase
+	author: Justin ^_-
+	*/
+	
+function to_title_case(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }

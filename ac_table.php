@@ -34,7 +34,7 @@ class table {
   $q = $conn->query($statement);
   $results = $q->fetchAll(PDO::FETCH_ASSOC);
   $results = json_encode($results);
-  echo $results;
+  return $results;
  }
 
  public function select_where($wh) {
@@ -121,8 +121,8 @@ class table {
   }else{
    $statement = "UPDATE {$this->table} SET $updates" ;
   }
-  echo $statement;
-  die();
+//  echo $statement;
+ // die();
 //var_dump($statement);die();
   if ($conn->exec($statement)) {
    return true;
