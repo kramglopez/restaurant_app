@@ -68,8 +68,6 @@
 			$('#'+element_id).dialog({
 				height: 'auto',
 				width: 'auto',
-			    position: 'top',
-				// zIndex: 999,
 				autoOpen: false,
 				modal: true,
  				buttons: {
@@ -415,14 +413,23 @@
 						success: function (response){
 							console.log(response);	
 							var obj = jQuery.parseJSON(response);
+							$.ajax({
+								url:'form_add_restaurant_name.php',
+								success: function (response){ 
+									$('div#content_bottom').html("");
+									$('div#content_bottom').append(response);
+						
+									$.each(obj,function(index,value){
+										var br_id = value['class_id'];
+										var br_desc = to_title_case(value['class_desc']);
+										console.log(br_desc);
+										$("select#rest_type").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
+									//$("select#rest_type").append('<option></option>').val(br_id).html(br_desc);
+									});
+								}
+							});		
+							//console.log(obj);
 					
-							console.log(obj);
-							$.each(obj,function(index,value){
-								var br_id = value['class_id'];
-								var br_desc = to_title_case(value['class_desc']);
-								//	console.log(value);
-								$("select#rest_type").append("<option id='"+br_id+"' value='"+br_id+"'>"+br_desc+"</option>");
-								});
 							/*$.ajax({
 								type: 'POST',
 								url:'trans_report.php',
@@ -436,13 +443,16 @@
 						}
 					});
 											
-			$.ajax({
-				url:'form_add_restaurant_name.php',
-				success: function (response){ 
-						$('div#content_bottom').html("");
-						$('div#content_bottom').append(response);
-				}
-			});										
+									
+		});
+		
+		/*Add Restaurant Name submit form*/
+		
+		$('form#add_restaurant_form').find('#submit').on('click',function(){
+			event.preventDefault(); 
+			alert($('form#add_restaurant_form').serializeArray());
+		    console.log($('form#add_restaurant_form').serializeArray());
+		
 		});
 	
 	 	
@@ -518,7 +528,8 @@
 			$("table#"+table_id).advancedtable({searchField: "#search", loadElement: "#loader", searchCaseSensitive: false, ascImage: "css/images/up.png", descImage: "css/images/down.png", searchOnField: "#searchOn"});
 		}
 	
-		
+	
+		/********** CLASS **********/
 		$('a#class').unbind().on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault(); 
@@ -529,12 +540,17 @@
 				type: 'POST',
 				url:'controller.php',
 						data: {'function_name':'get_class'},
-				success: function (response){ 
+				success: function (resp){ 
+				
+					var obj = jQuery.parseJSON(resp);
+				
 					$.ajax({
 						type: 'POST',
 						url:'class.php',
-						data: {'data':response},
-						success: function (response){ 
+						data: {'data':resp},
+						success: function (response){
+							// console.log(resp);
+
 							$('div#content_bottom').html("");
 							$('div#content_bottom').append(response);							
 							$.isLoading("hide");
@@ -545,7 +561,6 @@
 		});
 		
 		
-		/********** ADD NEW CLASS **********/
 		$('a#add_class').on('click',function(event){
 			event.stopImmediatePropagation(); 
 			event.preventDefault();
@@ -574,11 +589,16 @@
 				buttons: {
 					Save: function() {
 
-						if($("input#tb_class").val() == ""){
-							$("input#tb_class").css({'background-color' : '#f2dede'});
+						var class_desc = $("input#input_class")
+						var submit_data = [class_desc];
+					
+						
+						if ($("input#input_class").val() == "") {
+							$("input#input_class").css({'background-color' : '#f2dede'});
 							$("div#error_msg").show();
 						}
 						else {
+
 							$.ajax({
 								url: 'controller.php',
 								data: { 
@@ -587,32 +607,58 @@
 									  },
 								type: "POST",
 								success: function(response){
-									// console.log(response);
 									// alert(response);
+									var status = $('input[name=rad_status]:checked').val();
+									var class_id = response;
+									var enable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1' checked><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0'><label for="+class_desc.val()+">Disable</label></div></td>";
+									var disable = "<td style='text-align:center;'><div id="+ class_id +" class='rad_class_status'><input type='radio' id="+ class_id +" name="+ class_id +" value='1'><label for="+ class_id +">Enable</label><input type='radio' id="+class_desc.val()+" name="+ class_id +" value='0' checked><label for="+class_desc.val()+">Disable</label></div></td>";
+									var ch = $('table#class').find('tr').length-2; 
+									var clas = $("table#class tr:nth-child("+ch+")").attr('class');
+									var odd_even = (clas == 'odd') ? 'even' : 'odd';
+									var user_type = ($('#ut_id').val() == '4') ? 'Restaurant Staff' : 'Restaurant Manager';
+									var add_tbl_row = "<tr class= "+ odd_even +" style='display: table-row'>";
+										add_tbl_row += "<td>"+class_desc.val()+"</td>";
+										
+										if(status == 1){
+											add_tbl_row += enable;
+										}
+										else {
+											add_tbl_row += disable;
+										}
+										
+										add_tbl_row += "<td style='text-align:center;'><input type='checkbox' name='delete' /></td>";
+										add_tbl_row += "</tr>";
+										
+									$('table#class').append(add_tbl_row);
+									
+									$( '.rad_class_status' ).buttonset();
 									$( "#dialog_add_class" ).dialog('close');
-
 									build_dialog('dialog_new_class_confirm');
 									$('#dialog_new_class_confirm').dialog('open'); 
-
+									
 								}
 							});
-						}
-							
+
+						} // else //
+													
 					},
 					Cancel: function() {
+						$("input#input_class").css({'background-color' : ''});
+						$("input#input_class").val("")
+						$("div#error_msg").hide();
 						$( this ).dialog( "close" );
 					}
 				}
 				
 			});
 		};
-		/********** END: ADD NEW CLASS **********/
+		/********** END: CLASS **********/
 		
-		/********** function whether to show or not to show home page **********/
+		// function whether to show or not to show home page //
 		function do_show_home(element){
 		  if($('div#content_bottom').text().trim().length == 0){
 			$(element).click();
-			//console.log($(element));
+			// console.log($(element));
 			
 		  }
         }		

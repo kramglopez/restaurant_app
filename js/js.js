@@ -187,18 +187,21 @@ $(document).ready(function(){
 	
 	//page: form_product
 	$('form').find('#btn_submit_product').click(function(){
+
 		var ok = true;
-		$('#manage_product input, #manage_product textarea').each(function(){
-			if(!$(this).val()){	$(this).css('background-color', '#FF8073'); ok = false;	}
+		$('#content_bottom #manage_product input[type=text]:not(input[name="inp_menu_cat_others"]), #content_bottom #manage_product textarea').each(function(){
+			if(!$(this).val()){	$(this).css('background-color', '#FF8073'); console.log(this); ok = false;	}
 			else{	$(this).css('background-color', '#fafafa');	}			
 		});
 		if(ok == true)	
 			submit_product('product_add');
+			
 	});
 	
 	//page: form_product, submit form
 	function submit_product(function_name){
 		var food_img = $('form').find('#img_base_container').text();
+		alert(food_img);
 		var data = {post: $('#manage_product').serializeArray() , img: food_img, function_name: function_name, branch_id: $('#br_id').val(), food_id: food_id};
 		console.log(data);
 		$.ajax({
@@ -316,6 +319,22 @@ $('html').find("#inp_menu_image").change(function()	{	readImage( this );	});
 	
 	
 	
+function readImage(input){
+
+	if ( input.files && input.files[0] ) {
+		
+		var FR = new FileReader();
+			FR.onload = function(e) {
+				$('form').find('#img_base_container').text(e.target.result);
+				img_base = $('form').find('div#img_base_container').text();
+				$('#image_view').attr('src',img_base);				
+			};       
+
+			FR.readAsDataURL( input.files[0] );
+		
+	}
+
+}
 	
 });
 

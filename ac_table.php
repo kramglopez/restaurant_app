@@ -20,8 +20,8 @@ class table {
                 //  $get_key_val = get_arr_key_value($data);
   //extract $get_key_val;
   $statement = "INSERT INTO $this->table ($fields) VALUES ('$values')";
-//var_dump($statement);die(); 
- $conn->exec($statement) or die(print_r($conn->errorInfo()));
+
+  $conn->exec($statement) or die(print_r($conn->errorInfo()));
  
   return $conn->lastInsertId();
 
@@ -121,9 +121,7 @@ class table {
   }else{
    $statement = "UPDATE {$this->table} SET $updates" ;
   }
-//  echo $statement;
- // die();
-//var_dump($statement);die();
+
   if ($conn->exec($statement)) {
    return true;
   }else{

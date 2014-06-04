@@ -89,7 +89,7 @@
 			$send['food_latest'] = $data[8]['value'];
 			$send['food_best_seller'] = $data[9]['value'];
 			$send['food_promo'] = $data[10]['value'];
-			$send['food_status'] = $data[13]['value'];
+			$send['food_status'] = $data[11]['value'];
 			
 			$cond['food_id'] = $food_id;
 
@@ -124,27 +124,44 @@
 			$data = $_POST['post'];
 			$menu_code = "$branch_id".strtoupper(substr($data[0]['value'], 0, 3));
 			
+			$send['food_title'] = strtolower($data[0]['value']);
+			$send['food_desc'] = $data[1]['value'];
+			$send['food_code'] = $menu_code;
+			$send['food_img'] = $menu_code.".jpg";
+			$send['food_oldprice'] = $data[2]['value'];
+			$send['food_newprice'] = $data[3]['value'];
+			$send['food_quantity'] = $data[5]['value'];
+			$send['menu_id'] = $data[6]['value'];
+			$send['class_id'] = $data[7]['value'];
+			$send['food_latest'] = $data[8]['value'];
+			$send['food_best_seller'] = $data[9]['value'];
+			$send['food_promo'] = $data[10]['value'];
+			$send['food_status'] = $data[11]['value'];
 			$send['branch_id'] = $branch_id;
-			$send['menu_code'] = $menu_code;
-			$send['menu_img'] = $menu_code.".png";
-			$send['menu_name'] = strtolower($data[0]['value']);
-			$send['menu_desc'] = $data[1]['value'];
-			$send['menu_price'] = $data[2]['value'];
-			$send['menu_status'] = $data[6]['value'];
-			$send['menu_category'] = strtolower($data[5]['value']);
 			
-			
-			// $id = $this->insert($send); 
-			// if($id > 0)
-			// {
-			   // $img_required['photo'] = str_replace("data:image/png;base64,","",$img);
-			   // $img_required['folder'] = 'images/menu';
-			   // $img_required['title'] = $menu_code;
-			   // $image = json_encode($img_required, true);
-			   // echo $this->save_image_to_folder($image);
-			// }else{
-			  // echo 0;
-			// }			
+			$id = $this->insert($send); 
+			if($id > 0)
+			{
+				if (strpos($img, 'data:image/png;base64') !== false)
+					$img_required['photo'] = str_replace("data:image/png;base64,","",$img);
+				if (strpos($img, 'data:image/jpeg;base64') !== false)
+					$img_required['photo'] = str_replace("data:image/jpeg;base64,","",$img);
+				if (strpos($img, 'data:image/jpg;base64') !== false)
+					$img_required['photo'] = str_replace("data:image/jpg;base64,","",$img);
+					
+			   $img_required['folder'] = 'images/menu';
+			   $img_required['title'] = $menu_code.$id;
+			   $image = json_encode($img_required, true);
+			   if($this->save_image_to_folder($image) == 0)
+			   {
+					$send['food_img'] = $menu_code.$id.'.jpg';
+					$cond['food_id'] = $id;
+
+					$result = $this->update($send,$cond);
+			   }
+		    }else{
+			   echo 0;
+			}			
 		}
 		
 		/************PRODUCTS**************/
@@ -184,7 +201,7 @@
 				$logo =  base64_encode(file_get_contents($dir.$detail[$img_key]));
 				$detail[$img_key] = ((file_exists($dir.$detail[$img_key])) && (!empty($detail[$img_key]))) ? $logo : '';
 			 }
-		   return json_encode($arr);
+		    return json_encode($arr);
 		  }
 		  
 		 /*
@@ -381,7 +398,7 @@
 			$res_id = $_SESSION['auth'][0]['res_id'];
 
 			$sql_que = 	"
-						SELECT class_id, class_desc, insert_date, update_date, au_user_id
+						SELECT class_id, class_desc, class_status, insert_date, update_date, au_user_id
 						FROM tbl_cat_class
 						";	   
 			
@@ -394,19 +411,25 @@
 		public function add_class(){
 			global $conn;
 			extract($_POST);
+			// print_r($_POST);
+			
 			$class = $_POST['form'][0]['value'];
-			// $status = $_POST['form'][1]['value'];
-			$this->table = 'tbl_restaurant_class';
-			$class_data['res_class_desc'] = $class;
+			$status = $_POST['form'][1]['value'];
+
+			$this->table = 'tbl_cat_class';
+
+				$class_data['class_desc'] = $class;
+				$class_data['class_status'] = $status;
+
 			$id = $this->insert($class_data);
-			/*
+			
 			if($id > 0)
 			{
 				echo $id;
 			}else{
 				echo 0;
 			}		
-			*/
+			
 		}
 		/********** END: CLASS **********/
 		
