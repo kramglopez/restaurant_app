@@ -92,6 +92,7 @@ function readImage(input){
 
 }
 
+
 	/*
 	function: to_title_case
 	params: str: string to be converted into upper case
@@ -103,3 +104,19 @@ function to_title_case(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
+
+	/*
+	function: image_preview 06/04/14
+	params: {input: file_to_upload, img_location:where to put image} 
+	usage:  preview the image to upload
+	author: Justin ^_-
+	*/
+   function image_preview(input,img_location) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+        $(img_location).attr('src', e.target.result);
+       }
+        reader.readAsDataURL(input.files[0]);
+       }
+    }

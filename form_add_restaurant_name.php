@@ -71,7 +71,7 @@ $(function() {
 					</tr>
 					<tr>
 						<td class="padding_left">Logo</td>
-						<td class="padding_right"><input type="file" class="form-control" id="inp_res_image" name="inp_res_image" /> 
+						<td class="padding_right"><img alt="Image Display Here" width='100' height='100' id='image_prev' src="#"><input onchange = "image_preview(this,'#image_prev')" type="file" class="form-control" id="inp_res_image" name="inp_res_image" /> 
 </td>
 					</tr>
 					<tr>

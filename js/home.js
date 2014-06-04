@@ -451,8 +451,18 @@
 		$('form#add_restaurant_form').find('#submit').on('click',function(){
 			event.preventDefault(); 
 			alert($('form#add_restaurant_form').serializeArray());
-		    console.log($('form#add_restaurant_form').serializeArray());
-		
+		    var fields = $('form#add_restaurant_form').serializeArray();
+			fields += {name:'image',input: $('inp_res_image')};
+			$.ajax({
+				type: 'POST',
+				url:'controller.php',
+				data: {'function_name':'add_restaurant_name','data':fields},
+				success: function (response){ 
+						$('div#content_bottom').html("");
+							$('div#content_bottom').append(response);
+								$.isLoading("hide");
+							}
+						});			
 		});
 	
 	 	
