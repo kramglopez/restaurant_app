@@ -402,6 +402,7 @@
 			$sql_que = 	"
 						SELECT class_id, class_desc, class_status, insert_date, update_date, au_user_id
 						FROM tbl_cat_class
+						WHERE class_status != 3
 						";	   
 			
 			$query = $conn->query($sql_que);
@@ -411,7 +412,6 @@
 		}
 		
 		public function add_class(){
-			global $conn;
 			extract($_POST);
 			// print_r($_POST);
 			
@@ -430,8 +430,30 @@
 				echo $id;
 			}else{
 				echo 0;
-			}		
-			
+			}
+		}
+		
+		public function update_class(){
+			$this->table = 'tbl_cat_class';
+			foreach($_POST['form'] as $item)
+			{
+				extract($item);
+				$status['class_status'] = $value;
+				$id['class_id'] = $name;
+				$result = $this->update($status,$id);
+			}
+		}
+		
+		public function delete_class(){
+			foreach($_POST['data'] as $item)
+			{
+				$this->table = 'tbl_cat_class';
+				$send['class_status'] = '3';
+				$cond['class_id'] = $item;
+
+				$result = $this->update($send,$cond);
+			}
+			return $_POST['data'];
 		}
 		/********** END: CLASS **********/
 		
