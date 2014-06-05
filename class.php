@@ -19,7 +19,7 @@
 		$('select').children().remove();
 		$("#searchtable").show();
 
-		$("table#class").advancedtable({searchField: "#search", loadElement: "#loader", searchCaseSensitive: false, ascImage: "css/images/up.png", descImage: "css/images/down.png", searchOnField: "#searchOn"});
+		$("table#class").advancedtable({searchField: "#search", loadElement: "#loader", searchCaseSensitive: false, ascImage: "css/images/up.png", descImage: "css/images/down.png", searchOnField: "#searchOn", sorting: false});
 	});
 
 	$(function() {
