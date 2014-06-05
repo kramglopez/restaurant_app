@@ -655,8 +655,9 @@
 									
 									}
 									else{
-										$('div#error_msg').show();
+										$("input#input_class").css({'background-color' : '#f2dede'});
 										$('div#error_msg').text('This class already exists.');
+										$('div#error_msg').show();
 									}
 									
 								}
