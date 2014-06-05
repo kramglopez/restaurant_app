@@ -19,7 +19,7 @@
 	});
 </script>
 
-	<div id="error_msg" class="alert_msg" style="display: none;">Fill in required fields.</div>	
+	<div id="error_msg" class="alert_msg" style="display: none;"><span class="ui-icon ui-icon-alert" style="float: left; margin-top: 2px;"></span>&nbsp;Fill in required fields.</div>	
 
 	<form id='add_class_form' style='width: 80%; margin: 0 auto;' class="form-horizontal">
 		<div class="form-group">
