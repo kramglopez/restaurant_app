@@ -573,16 +573,21 @@
 		
 		
 		// add class //
-		$(document).on('click', 'a#add_class', function() {
+		$('a#add_class').on('click',function(){
+		// $(document).on('click', 'a#add_class', function() {
 			dialog_add_class();
 		    $( "#dialog_add_class" ).dialog('open');
 		});	
 		
 		
 		function dialog_add_class(){
+		
+			var myPos = [ $(window).width() / 'center', 200 ];
+		
 			$( "#dialog_add_class" ).dialog({
 				autoOpen: false,	 
 				width: 400,
+				position: myPos,
 				modal: true,
 				
 				open: function() {
