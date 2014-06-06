@@ -391,18 +391,19 @@
 		*/
 		public function get_class(){	
 			global $conn;
-		  
+			/*
 			if(!isset($_SESSION)){
 				session_start();
 			}		
 			
 			$fields = array('fname','lname','middle');
 			$res_id = $_SESSION['auth'][0]['res_id'];
-
+			*/
 			$sql_que = 	"
 						SELECT class_id, class_desc, class_status, insert_date, update_date, au_user_id
 						FROM tbl_cat_class
 						WHERE class_status != 3
+						ORDER BY class_id ASC
 						";	   
 			
 			$query = $conn->query($sql_que);
