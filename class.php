@@ -83,60 +83,55 @@
 					<th style="text-align: center;">Check All &nbsp;<input type="checkbox" id="check_all" /></th>
 					<!--<td style="/*font-weight: bold;*/ border-top: 1px solid #BBB; border-bottom: 1px solid #BBB; padding: 8px; color: #444;"><span>Check All </span><input type="checkbox" id="check_all" /></td>-->
 				</tr>
-				<!--
-				<tr>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td style="text-align:center;"><a href="">Check/Uncheck All</a></td>
-				</tr>
-				-->
 			</thead>
 
 			<tbody>
 
 				<?php
-					foreach($data as $info){
-				?>
-				<tr>
-					<td style="padding-left:10px; display:none;">
-						<?php echo $info['class_id']; ?>
-					</td>
-					<td style="padding-left:10px;">
-						<?php echo ucfirst($info['class_desc']); ?>
-					</td>
-					<td style="text-align: center;">
+					foreach($data as $info)
+					{
+					
+						extract($info);
+						$radio_id1 = $class_id."_a";
+						$radio_id2 = $class_id."_b";
 						
-						<?php
-						if ($info['class_status'] == 1) {
-						?>
-						
-							<div id="<?php echo $info['class_id']; ?>" class="rad_class_status">
-								<input type="radio" id="<?php echo $info['class_id']; ?>" name="<?php echo $info['class_id']; ?>" value="1" checked><label for="<?php echo $info['class_id']; ?>">Enable</label>
-								<input type="radio" id="<?php echo ucfirst($info['class_desc']); ?>" name="<?php echo $info['class_id']; ?>" value="0"><label for="<?php echo ucfirst($info['class_desc']); ?>">Disable</label>
+						$enable = "
+							<div id='$class_id' class='rad_class_status'>
+								<input type='radio' id='$radio_id1' name='$class_id' value='1' checked>
+									<label for='$radio_id1'>Enable</label>
+								<input type='radio' id='$radio_id2' name='$class_id' value='0'>
+									<label for='$radio_id2'>Disable</label>
 							</div>
+						";
 						
-						<?php
-						}
-						else {
-						?>
-						
-							<div id="<?php echo $info['class_id']; ?>" class="rad_class_status">
-								<input type="radio" id="<?php echo $info['class_id']; ?>" name="<?php echo $info['class_id']; ?>" value="1"><label for="<?php echo $info['class_id']; ?>">Enable</label>
-								<input type="radio" id="<?php echo ucfirst($info['class_desc']); ?>" name="<?php echo $info['class_id']; ?>" value="0" checked><label for="<?php echo ucfirst($info['class_desc']); ?>">Disable</label>
+						$disable = "
+							<div id='$class_id' class='rad_class_status'>
+								<input type='radio' id='$radio_id1' name='$class_id' value='1'>
+									<label for='$radio_id1'>Enable</label>
+								<input type='radio' id='$radio_id2' name='$class_id' value='0' checked>
+									<label for='$radio_id2'>Disable</label>
 							</div>
+						";
 						
-						<?php
-						}
-						?>
-
-					</td>
-					<td style="text-align:center;">
-						<input type="checkbox" id="<?php echo $info['class_id']; ?>" name="delete" />
-					</td>
-				</tr>
-
-				<?php
-				} 
+						echo "
+							<tr>
+								<td style='display: none;'>$class_id</td>
+								<td style='padding-left:10px; text-transform: capitalize;'>$class_desc</td>
+								<td style='text-align: center;'>
+						";
+									if ($class_status == 0) {
+										echo $disable;
+									}
+									else {
+										echo $enable;
+									}
+						echo "
+								</td>
+								<td style='text-align:center;'><input type='checkbox' id='$class_id' name='delete'/></td>
+							</tr>
+						";
+					
+					}
 				?>
 
 			</tbody>
